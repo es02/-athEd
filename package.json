@@ -4,7 +4,11 @@
   "description": "An editor with built in interpreter for the ~Ath language (Drocta~Ath implementation)",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "electron-webpack dev",
+    "compile": "electron-webpack",
+    "dist": "npm run compile && electron-builder",
+    "dist:dir": "npm run dist --dir -c.compression=store -c.mac.identity=null"
   },
   "repository": {
     "type": "git",
@@ -15,13 +19,16 @@
     "ath",
     "esolang"
   ],
-  "author": "Josh <gillingja@gmail.com>, Chris <c.bailey1@uqconnect.edu.au>, Adam <adam_banham@hotmail.com>",
+  "author": "Josh <gillingja@gmail.com>, Chris <c.bailey1@uqconnect.edu.au>, Adam <adam_banham@hotmail.com>, Aimi <minervavine@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/es02/-athEd/issues"
   },
   "homepage": "https://github.com/es02/-athEd#readme",
   "dependencies": {
-    "electron": "^6.0.6"
+    "electron": "^6.0.6",
+    "electron-builder": "^21.0.11",
+    "electron-webpack": "^2.7.4",
+    "webpack": "~4.35.3"
   }
 }
