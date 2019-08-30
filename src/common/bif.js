@@ -17,7 +17,7 @@ var value_obj = class {
         this.living = true;
     }
     bifurcate() {
-        if (!this.hasOwnProperty('parts') && this.parts.length === 0) {
+        if (!this.hasOwnProperty('parts') || this.parts.length === 0) {
             let leftHalf = new value_obj(this);
             leftHalf.formsLeftOf.push(this);
             leftHalf.whichHalve = (1,0);
@@ -40,7 +40,7 @@ var value_obj = class {
  * @return {value_obj}       [description]
  */
 export function bifurcate(value) {
-    if (!value.hasOwnProperty('parts') && value.parts.length === 0) {
+    if (!value.hasOwnProperty('parts') || value.parts.length === 0) {
         let leftHalf = new value_obj(value);
         leftHalf.formsLeftOf.push(value);
         leftHalf.whichHalve = (1,0);
