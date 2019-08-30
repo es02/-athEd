@@ -15,25 +15,21 @@ import re
 import pdb
 import matchParens
 
-
 def bifurcate(valueA,valueB=False):
     if(valueB):
         return bif.unbifurcate(valueA, valueB)
     else:
         return bif.bifurcate(valueA)
 
-
-
 /*
 def textToNextSemicolon(text,start=0):
     semicolonOffset=text.find(';',start)
     return text[start:semicolonOffset]
 */
-function textToNextSemicolon(text, start = 0) {
+function textToNextSemicolon (text, start = 0) {
   var semicolonOffset = text.substring(0, start).indexOf(';');
   return text.substring(start, semicolonOffset);
 }
-
 
 /*
 charObjs={}
@@ -61,7 +57,6 @@ def getObjStr(theObj):
                 break
         theObj2=rightObj
     return outStr
-
 
 funCodes={}
 funCodes['HELLO']="""
@@ -95,7 +90,6 @@ print DONE!;
 
 THIS.DIE(C);
 """#NOTE:use a better addition algorithm.
-
 
 NULL_obj=bif.value_obj()
 NULL_obj.DIE()
@@ -219,7 +213,9 @@ def evalScript(script,inObj):
                 nextNewlinePos=script.find('\r',charNum)
             charNum=nextNewlinePos
         elif(script.startswith('/*',charNum)):
-            charNum=script.find('*/',charNum)
+*/
+//            charNum=script.find('*/',charNum)
+/*
         elif(script.startswith('PYDEBUG',charNum)):
             pdb.set_trace()
             charNum+=5

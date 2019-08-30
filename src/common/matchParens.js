@@ -19,7 +19,7 @@ def matchParens(text,start,openStr,closeStr):
     return charNum-1
 */
 
-function matchParens(text, start, openStr, closeStr) {
+function matchParens (text, start, openStr, closeStr) {
   var count = 0;
   var charNum = start;
   var firstChar = true;
@@ -27,10 +27,10 @@ function matchParens(text, start, openStr, closeStr) {
     if (charNum >= text.length) {
       console.log('err:could not find match!');
       return -1;
-    } else if (text.charAt(charNum) == closeStr) {
+    } else if (text.charAt(charNum) === closeStr) {
       count -= 1;
       console.log('close at ' + String(charNum));
-    } else if (text.charAt(charNum) == openStr) {
+    } else if (text.charAt(charNum) === openStr) {
       count += 1;
       console.log('open at ' + String(charNum));
       if (firstChar) {
