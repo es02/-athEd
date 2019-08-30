@@ -1,0 +1,1 @@
+// Global React app component rendered by ./index.js
