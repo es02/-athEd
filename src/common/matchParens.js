@@ -20,19 +20,19 @@ def matchParens(text,start,openStr,closeStr):
 */
 
 function matchParens(text, start, openStr, closeStr) {
-  count = 0;
-  charNum = start;
-  firstChar = true;
+  var count = 0;
+  var charNum = start;
+  var firstChar = true;
   while (count > 0 || firstChar) {
     if (charNum >= text.length) {
-      console.log("err:could not find match!");
+      console.log('err:could not find match!');
       return -1;
     } else if (text.charAt(charNum) == closeStr) {
       count -= 1;
-      console.log("close at " + String(charNum));
+      console.log('close at ' + String(charNum));
     } else if (text.charAt(charNum) == openStr) {
       count += 1;
-      console.log("open at " + String(charNum));
+      console.log('open at ' + String(charNum));
       if (firstChar) {
         firstChar = false;
       }

@@ -13,6 +13,7 @@ or you could just check the github versions. w/e.)
 import bif
 import re
 import pdb
+import matchParens
 
 
 def bifurcate(valueA,valueB=False):
@@ -22,54 +23,19 @@ def bifurcate(valueA,valueB=False):
         return bif.bifurcate(valueA)
 
 
-def matchParens(text,start,openStr,closeStr):
-    count=0
-    charNum=start
-    firstChar=True
-    while(count>0 or firstChar):
-        if(charNum>=len(text)):
-            #print "err:could not find match!"
-            return -1
-        elif(text[charNum]==closeStr):
-            count=count-1
-            #print "close at "+str(charNum)
-        elif(text[charNum]==openStr):
-            count=count+1
-            #print "open at "+str(charNum)
-            if(firstChar):
-                firstChar=False
-        charNum=charNum+1
-    return charNum-1
-*/
-function matchParens(text, start, openStr, closeStr) {
-  count = 0;
-  charNum = start;
-  firstChar = true;
-  while (count > 0 || firstChar) {
-    if (charNum >= text.length) {
-      console.log("err:could not find match!");
-      return -1;
-    } else if (text.charAt(charNum) == closeStr) {
-      count -= 1;
-      console.log("close at " + String(charNum));
-    } else if (text.charAt(charNum) == openStr) {
-      count += 1;
-      console.log("open at " + String(charNum));
-      if (firstChar) {
-        firstChar = false;
-      }
-    }
-    charNum += 1;
-  }
-  return charNum - 1;
-}
 
 /*
-
 def textToNextSemicolon(text,start=0):
     semicolonOffset=text.find(';',start)
     return text[start:semicolonOffset]
+*/
+function textToNextSemicolon(text, start = 0) {
+  var semicolonOffset = text.substring(0, start).indexOf(';');
+  return text.substring(start, semicolonOffset);
+}
 
+
+/*
 charObjs={}
 def getCharObj(theChar):
     if(theChar in charObjs):
