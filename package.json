@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/es02/-athEd/issues"
   },
-  "homepage": "https://github.com/es02/-athEd#readme"
+  "homepage": "https://github.com/es02/-athEd#readme",
+  "dependencies": {
+    "electron": "^6.0.6"
+  }
 }
