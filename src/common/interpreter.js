@@ -40,6 +40,31 @@ def matchParens(text,start,openStr,closeStr):
                 firstChar=False
         charNum=charNum+1
     return charNum-1
+*/
+function matchParens(text, start, openStr, closeStr) {
+  count = 0;
+  charNum = start;
+  firstChar = true;
+  while (count > 0 || firstChar) {
+    if (charNum >= text.length) {
+      console.log("err:could not find match!");
+      return -1;
+    } else if (text.charAt(charNum) == closeStr) {
+      count -= 1;
+      console.log("close at " + String(charNum));
+    } else if (text.charAt(charNum) == openStr) {
+      count += 1;
+      console.log("open at " + String(charNum));
+      if (firstChar) {
+        firstChar = false;
+      }
+    }
+    charNum += 1;
+  }
+  return charNum - 1;
+}
+
+/*
 
 def textToNextSemicolon(text,start=0):
     semicolonOffset=text.find(';',start)
