@@ -55,7 +55,16 @@ var allValueObjs=[];
 
 var value_obj = class {
     bifurcate(self) {
-        //
+        if (!self.hasOwnProperty('parts')) {
+            let leftHalf = new value_obj(self);
+            leftHalf.formsLeftOf.add(self);
+            leftHalf.whichHalve = (1,0);
+            rightHalf = new value_obj(self);
+            rightHalf.formsRightOf.add(self);
+            rightHalf.whichHalve = (0,1);
+            self.parts = (leftHalf,rightHalf);
+        }
+        return self.parts;
     },
     die(self) {
         self.living=false;
@@ -64,7 +73,16 @@ var value_obj = class {
 }
 
 export function bifurcate(value) {
-    //
+    if (!value.hasOwnProperty('parts')) {
+        let leftHalf = new value_obj(value);
+        leftHalf.formsLeftOf.add(value);
+        leftHalf.whichHalve = (1,0);
+        rightHalf = new value_obj(value);
+        rightHalf.formsRightOf.add(value);
+        rightHalf.whichHalve = (0,1);
+        value.parts = (leftHalf,rightHalf);
+    }
+    return self.parts;
 }
 
 export function unbifurcate(valueA, valueB) {
