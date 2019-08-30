@@ -50,3 +50,23 @@ def unbifurcate(valueA,valueB):
     valueB.formsRightOf.append(combined)
     return combined
  */
+
+var allValueObjs=[];
+
+value_obj = class {
+    bifurcate(self) {
+        //
+    },
+
+    die(self) {
+
+    }
+}
+
+export function bifurcate(value) {
+    //
+}
+
+export function unbifurcate(valueA,valueB) {
+    //
+}
