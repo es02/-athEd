@@ -54,9 +54,26 @@ def unbifurcate(valueA,valueB):
 var allValueObjs=[];
 
 var value_obj = class {
+    constructor(self,parts=[]){
+        self.parts=parts
+        self.formsLeftOf=[]
+        self.formsRightOf=[]
+        self.whichHalve=[0,0]
+        self.living=True
+    }
     bifurcate(self) {
         //
-    },
+        if(! self.parts){
+            var leftHalf= new value_obj()
+            leftHalf.formsLeftOf.push(self)
+            leftHalf.whichHalve=[1,0]
+            var rightHalf = new value_obj()
+            rightHalf.formsRightOf.psuh(self)
+            rightHalf.whichHalve =[0,1]
+            self.parts=[leftHalf,rightHalf]
+        }
+        return self.parts
+    }
     die(self) {
         self.living=false;
         return self;
