@@ -1,33 +1,9 @@
 /*
-"""
-python drocta ~ATH interpreter
-It interprets things written in drocta ~ATH
-and is written in python.
-Really, I thought the name was fairly self explanatory.
-This file handles Bifurcation, reverse Bifurcation, and .DIE()
-It creates the function for modifying values. (not the variables, the values)
-"""
-
-class value_obj:
-    def __init__(self,parts=()):
-        self.parts=parts
-        self.formsLeftOf=[]
-        self.formsRightOf=[]
-        self.whichHalve=(0,0)#left half is (1,0), right half is (0,1)
-        self.living=True
-    def bifurcate(self):
-        if(not self.parts):
-            leftHalf=value_obj()
-            leftHalf.formsLeftOf.append(self)
-            leftHalf.whichHalve=(1,0)
-            rightHalf=value_obj()
-            rightHalf.formsRightOf.append(self)
-            rightHalf.whichHalve=(0,1)
-            self.parts=(leftHalf,rightHalf)
-        return self.parts
-    def DIE(self):
-        self.living=False
-
+    Ported from python drocta ~ATH interpreter
+    It interprets things written in drocta ~ATH
+    Really, I thought the name was fairly self explanatory.
+    This file handles Bifurcation, reverse Bifurcation, and .DIE()
+    It creates the function for modifying values. (not the variables, the values)
  */
 
 var allValueObjs=[];
@@ -37,7 +13,7 @@ var value_obj = class {
         this.parts = parts;
         this.formsLeftOf = [];
         this.formsRightOf = [];
-        this.whichHalve = [0,0];
+        this.whichHalve = [0,0]; //left half is (1,0), right half is (0,1)
         this.living = true;
     }
     bifurcate() {
@@ -49,7 +25,7 @@ var value_obj = class {
             rightHalf.formsRightOf.add(this);
             rightHalf.whichHalve = (0,1);
             this.parts = (leftHalf,rightHalf);
-            
+
             return this.parts;
         }
     }
