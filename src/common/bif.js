@@ -55,20 +55,20 @@ var allValueObjs=[];
 
 value_obj = class {
 
-    constructor(parts=[]){
-        this.parts=parts
-        this.formsLeftOf=[]
-        this.formsRightOf=[]
-        this.whichHalve=(0,0)
-        this.living=true
+    constructor(self,parts=[]){
+        self.parts=parts
+        self.formsLeftOf=[]
+        self.formsRightOf=[]
+        self.whichHalve=(0,0)
+        self.living=true
     }
 
-    bifurcate() {
+    bifurcate(self) {
         //
         
     }
 
-    die() {
+    die(self) {
 
     }
 }
