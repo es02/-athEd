@@ -54,11 +54,21 @@ def unbifurcate(valueA,valueB):
 var allValueObjs=[];
 
 value_obj = class {
-    bifurcate(self) {
-        //
-    },
 
-    die(self) {
+    constructor(parts=[]){
+        this.parts=parts
+        this.formsLeftOf=[]
+        this.formsRightOf=[]
+        this.whichHalve=(0,0)
+        this.living=true
+    }
+
+    bifurcate() {
+        //
+        
+    }
+
+    die() {
 
     }
 }
