@@ -49,6 +49,8 @@ var value_obj = class {
             rightHalf.formsRightOf.add(this);
             rightHalf.whichHalve = (0,1);
             this.parts = (leftHalf,rightHalf);
+            
+            return this.parts;
         }
     }
     die() {
@@ -81,7 +83,7 @@ export function bifurcate(value) {
  * @return {[type]}        [description]
  */
 export function unbifurcate(valueA, valueB) {
-    valueA.formsLeftOf.forEach(function(value) {
+    var value = valueA.formsLeftOf.forEach(function(value) {
       if (valueB.formsRight.includes(value)) {
           return value;
       }
@@ -90,5 +92,9 @@ export function unbifurcate(valueA, valueB) {
     valueA.formsLeftOf.add(combined);
     valueB.formsRightOf.add(combined);
 
-    return combined;
+    if (value) {
+        return value;
+    } else {
+        return combined;
+    }
 }
