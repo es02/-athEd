@@ -54,7 +54,6 @@ def unbifurcate(valueA,valueB):
 var allValueObjs=[];
 
 value_obj = class {
-<<<<<<< HEAD
 
     constructor(self,parts=[]){
         self.parts=parts
@@ -68,11 +67,6 @@ value_obj = class {
         //
         
     }
-=======
-    bifurcate(self) {
-        //
-    },
->>>>>>> parent of 3eb74c1... unbifurcate
 
     die(self) {
 
