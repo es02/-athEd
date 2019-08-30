@@ -53,13 +53,13 @@ def unbifurcate(valueA,valueB):
 
 var allValueObjs=[];
 
-value_obj = class {
+var value_obj = class {
     bifurcate(self) {
         //
     },
-
     die(self) {
-
+        self.living=false;
+        return self;
     }
 }
 
@@ -67,6 +67,15 @@ export function bifurcate(value) {
     //
 }
 
-export function unbifurcate(valueA,valueB) {
-    //
+export function unbifurcate(valueA, valueB) {
+    valueA.formsLeftOf.forEach(function(value) {
+      if (valueB.formsRight.includes(value)) {
+          return value;
+      }
+    })
+    var combined = new value_obj(valueA, valueB);
+    valueA.formsLeftOf.add(combined);
+    valueB.formsRightOf.add(combined);
+
+    return combined;
 }
