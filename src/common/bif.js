@@ -33,10 +33,10 @@ class value_obj:
 var allValueObjs=[];
 
 var value_obj = class {
-    
+
 
     bifurcate(self) {
-        if (!self.hasOwnProperty('parts')) {
+        if (!self.hasOwnProperty('parts') && self.parts.length === 0) {
             let leftHalf = new value_obj(self);
             leftHalf.formsLeftOf.add(self);
             leftHalf.whichHalve = (1,0);
@@ -59,7 +59,7 @@ var value_obj = class {
  * @return {value_obj}       [description]
  */
 export function bifurcate(value) {
-    if (!value.hasOwnProperty('parts')) {
+    if (!value.hasOwnProperty('parts') && value.parts.length === 0) {
         let leftHalf = new value_obj(value);
         leftHalf.formsLeftOf.add(value);
         leftHalf.whichHalve = (1,0);
