@@ -8,8 +8,6 @@ This file handles Bifurcation, reverse Bifurcation, and .DIE()
 It creates the function for modifying values. (not the variables, the values)
 """
 
-allValueObjs=[]
-
 class value_obj:
     def __init__(self,parts=()):
         self.parts=parts
@@ -30,30 +28,13 @@ class value_obj:
     def DIE(self):
         self.living=False
 
-def bifurcate(value):
-    if(not value.parts):
-        leftHalf=value_obj()
-        leftHalf.formsLeftOf.append(value)
-        leftHalf.whichHalve=(1,0)
-        rightHalf=value_obj()
-        rightHalf.formsRightOf.append(value)
-        rightHalf.whichHalve=(0,1)
-        value.parts=(leftHalf,rightHalf)
-    return value.parts
-
-def unbifurcate(valueA,valueB):
-    for value in valueA.formsLeftOf:
-        if(value in valueB.formsRightOf):
-            return value
-    combined=value_obj((valueA,valueB))
-    valueA.formsLeftOf.append(combined)
-    valueB.formsRightOf.append(combined)
-    return combined
  */
 
 var allValueObjs=[];
 
 var value_obj = class {
+    
+
     bifurcate(self) {
         if (!self.hasOwnProperty('parts')) {
             let leftHalf = new value_obj(self);
@@ -72,6 +53,11 @@ var value_obj = class {
     }
 }
 
+/**
+ * [bifurcate description]
+ * @param  {value_obj} value [description]
+ * @return {value_obj}       [description]
+ */
 export function bifurcate(value) {
     if (!value.hasOwnProperty('parts')) {
         let leftHalf = new value_obj(value);
@@ -85,6 +71,12 @@ export function bifurcate(value) {
     return self.parts;
 }
 
+/**
+ * [unbifurcate description]
+ * @param  {[type]} valueA [description]
+ * @param  {[type]} valueB [description]
+ * @return {[type]}        [description]
+ */
 export function unbifurcate(valueA, valueB) {
     valueA.formsLeftOf.forEach(function(value) {
       if (valueB.formsRight.includes(value)) {
