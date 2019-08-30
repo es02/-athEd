@@ -1,0 +1,24 @@
+{
+  "name": "-athed",
+  "version": "1.0.0",
+  "description": "An editor with built in interpreter for the ~Ath language (Drocta~Ath implementation)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/es02/-athEd.git"
+  },
+  "keywords": [
+    "homestuck",
+    "ath",
+    "esolang"
+  ],
+  "author": "codeNetwork hackers",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/es02/-athEd/issues"
+  },
+  "homepage": "https://github.com/es02/-athEd#readme"
+}
