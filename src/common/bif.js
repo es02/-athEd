@@ -17,17 +17,17 @@ var value_obj = class {
         this.living = true;
     }
     bifurcate() {
-        if (!this.hasOwnProperty('parts') && this.parts.length === 0) {
+        if (!this.hasOwnProperty('parts') || this.parts.length === 0) {
             let leftHalf = new value_obj(this);
-            leftHalf.formsLeftOf.add(this);
-            leftHalf.whichHalve = (1,0);
+            leftHalf.formsLeftOf.push(this);
+            leftHalf.whichHalve = [1,0];
             rightHalf = new value_obj(this);
-            rightHalf.formsRightOf.add(this);
-            rightHalf.whichHalve = (0,1);
+            rightHalf.formsRightOf.push(this);
+            rightHalf.whichHalve = [0,1];
             this.parts = (leftHalf,rightHalf);
-
-            return this.parts;
         }
+
+        return this.parts;
     }
     die() {
         this.living=false;
@@ -40,13 +40,13 @@ var value_obj = class {
  * @return {value_obj}       [description]
  */
 export function bifurcate(value) {
-    if (!value.hasOwnProperty('parts') && value.parts.length === 0) {
+    if (!value.hasOwnProperty('parts') || value.parts.length === 0) {
         let leftHalf = new value_obj(value);
-        leftHalf.formsLeftOf.add(value);
-        leftHalf.whichHalve = (1,0);
+        leftHalf.formsLeftOf.push(value);
+        leftHalf.whichHalve = [1,0];
         rightHalf = new value_obj(value);
-        rightHalf.formsRightOf.add(value);
-        rightHalf.whichHalve = (0,1);
+        rightHalf.formsRightOf.push(value);
+        rightHalf.whichHalve = [0,1];
         value.parts = (leftHalf,rightHalf);
     }
     return self.parts;
@@ -65,8 +65,8 @@ export function unbifurcate(valueA, valueB) {
       }
     })
     var combined = new value_obj(valueA, valueB);
-    valueA.formsLeftOf.add(combined);
-    valueB.formsRightOf.add(combined);
+    valueA.formsLeftOf.push(combined);
+    valueB.formsRightOf.push(combined);
 
     if (value) {
         return value;
