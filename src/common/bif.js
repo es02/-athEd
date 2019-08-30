@@ -33,23 +33,26 @@ class value_obj:
 var allValueObjs=[];
 
 var value_obj = class {
-
-
-    bifurcate(self) {
-        if (!self.hasOwnProperty('parts') && self.parts.length === 0) {
-            let leftHalf = new value_obj(self);
-            leftHalf.formsLeftOf.add(self);
+    constructor(parts=[]){
+        this.parts = parts;
+        this.formsLeftOf = [];
+        this.formsRightOf = [];
+        this.whichHalve = [0,0];
+        this.living = true;
+    }
+    bifurcate() {
+        if (!this.hasOwnProperty('parts') && this.parts.length === 0) {
+            let leftHalf = new value_obj(this);
+            leftHalf.formsLeftOf.add(this);
             leftHalf.whichHalve = (1,0);
-            rightHalf = new value_obj(self);
-            rightHalf.formsRightOf.add(self);
+            rightHalf = new value_obj(this);
+            rightHalf.formsRightOf.add(this);
             rightHalf.whichHalve = (0,1);
-            self.parts = (leftHalf,rightHalf);
+            this.parts = (leftHalf,rightHalf);
         }
-        return self.parts;
-    },
-    die(self) {
-        self.living=false;
-        return self;
+    }
+    die() {
+        this.living=false;
     }
 }
 
