@@ -2,13 +2,12 @@
   "name": "-athed",
   "version": "1.0.0",
   "description": "An editor with built in interpreter for the ~Ath language (Drocta~Ath implementation)",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "electron-webpack dev",
-    "compile": "electron-webpack",
-    "dist": "npm run compile && electron-builder",
-    "dist:dir": "npm run dist --dir -c.compression=store -c.mac.identity=null"
+    "dev": "npm run build && npm run start",
+    "build": "echo 'Building...' && webpack",
+    "start": "electron build/main.bundle.js",
+    "watch": "./node_modules/.bin/webpack-dev-server --port 8182"
   },
   "repository": {
     "type": "git",
@@ -25,10 +24,23 @@
     "url": "https://github.com/es02/-athEd/issues"
   },
   "homepage": "https://github.com/es02/-athEd#readme",
+  "devDependencies": {
+    "babel-core": "^6.5.2",
+    "babel-loader": "^6.2.2",
+    "babel-preset-es2015": "^6.5.0",
+    "babel-preset-react": "^6.5.0",
+    "css-loader": "^0.23.1",
+    "electron-prebuilt": "^0.36.0",
+    "eslint": "^2.1.0",
+    "eslint-loader": "^1.2.1",
+    "node-sass": "^3.4.2",
+    "sass-loader": "^3.1.2",
+    "style-loader": "^0.13.0",
+    "webpack": "^1.12.14",
+    "webpack-dev-server": "^1.14.1"
+  },
   "dependencies": {
-    "electron": "^6.0.6",
-    "electron-builder": "^21.0.11",
-    "electron-webpack": "^2.7.4",
-    "webpack": "~4.35.3"
+    "react": "^0.14.7",
+    "react-dom": "^0.14.7"
   }
 }
