@@ -1,7 +1,7 @@
 var bifurcate = require('./bif.js').bifurcate;
 var unbifurcate = require('./bif.js').unbifurcate;
 
-function bifurcate(valueA, valueB = false) {
+function bif(valueA, valueB = false) {
     if (valueB) {
         return unbifurcate(valueA, valueB);
     } else {
@@ -10,5 +10,5 @@ function bifurcate(valueA, valueB = false) {
 }
 
 module.exports = {
-  bifurcate: bifurcate,
+  bifurcate: bif,
 }
