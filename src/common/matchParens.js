@@ -19,7 +19,15 @@ def matchParens(text,start,openStr,closeStr):
     return charNum-1
 */
 
-function matchParens (text, start, openStr, closeStr) {
+/**
+ * [matchParens description]
+ * @param {} text [description]
+ * @param {} start [description]
+ * @param {} openStr [description]
+ * @param {} closeStr [description]
+ * @return {} [description]
+ */
+export function matchParens (text, start, openStr, closeStr) {
   var count = 0;
   var charNum = start;
   var firstChar = true;

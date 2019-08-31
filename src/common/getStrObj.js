@@ -8,7 +8,12 @@ def getStrObj(theStr):
 import getCharObj from 'getCharObj';
 import bifurcate from 'interpreter';
 
-function getStrObj(theStr) {
+/**
+ * [getStrObj description]
+ * @param {} theStr [description]
+ * @return {} [description]
+ */
+export function getStrObj(theStr) {
   if (theStr.length === 0) {
     return null;
   } else {

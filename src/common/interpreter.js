@@ -31,18 +31,6 @@ def getCharObj(theChar):
         charObjs[theChar]=theCharObj
         return theCharObj
 
-def getObjStr(theObj):
-    outStr=""
-    theObj2=theObj
-    while(theObj2.living):
-        (leftObj,rightObj)=bifurcate(theObj2)
-        for char in charObjs:
-            if(charObjs[char]==leftObj):
-                outStr+=char
-                break
-        theObj2=rightObj
-    return outStr
-
 funCodes={}
 funCodes['HELLO']="""
 print "Hello World.";"
