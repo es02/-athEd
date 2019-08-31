@@ -2,18 +2,9 @@
 def evalScript(script,inObj):
     while(THIS.living):
 
+        (...)
 
-        elif(script.startswith('}',charNum)):
-            openingTuple=execStack.pop()
-            if(openingTuple[1]=='{'):
-                charNum=openingTuple[0]
-            else:
-                print('what are you trying to do? \"(...}\" error')
-        elif(script.startswith('print ',charNum)):
-            #print "print..."
-            semicolonOffset=script[charNum:].index(';')
-            print(script[charNum+6:charNum+semicolonOffset])
-            charNum+=semicolonOffset#+6
+
         elif(re.match(r'PRINT2 ([^\[\];]*);',script[charNum:])!=None):
             matches=re.match(r'PRINT2 ([^\[\];]*);',script[charNum:])
             print getObjStr(ATHVars[matches.group(1)])
@@ -126,19 +117,20 @@ import 'value_obj' from 'bif';
 import 'matchParens' from 'matchParens';
 
 export evalScript(script,inObj) {
-    var ATHVars={}
-    var universe = bif.value_obj()
-    ATHVars['universe'] = universe
-    ATHVars['NULL'] = NULL_obj
-    ATHVars['ARGS'] = inObj
-    var return_obj = NULL_obj
+    var ATHVars = {};
+    var universe = bif.value_obj();
+    ATHVars['universe'] = universe;
+    ATHVars['NULL'] = NULL_obj;
+    ATHVars['ARGS'] = inObj;
+    var return_obj = NULL_obj;
 
-    var charNum = 0
-    var execStack = []
+    var charNum = 0;
+    var execStack = [];
 
     while(universe.living){
-        var importTest = '/importf ([^; ]+) as ([^; ]+);/'
-        if(script.startsWith('import ',charNum)){
+        const importTest = '/importf ([^; ]+) as ([^; ]+);/';
+
+        if (script.startsWith('import ', charNum)) {
             var semicolonOffset = script.substring(charNum).indexOf(';');
             var importStatementStr = script.substring(charNum, charNum+semicolonOffset);
             var importStatementList = importStatementStr.split(' ');
@@ -146,7 +138,6 @@ export evalScript(script,inObj) {
                 ATHVars[importStatementList[importStatementList.length - 1]] = new value_obj();
             }
             charNum += semicolonOffset;
-
         } elseif (script.substring(charNum).test(importTest)) {
             matches = script.substring(charNum).match(importTest);
             var importfFilename = matches[1];
@@ -160,7 +151,7 @@ export evalScript(script,inObj) {
                 console.log("Error: could not read file " + importfFilename)
             }
             charNum = script.substring(charNum).indexOf(';');
-        } elseif (script.startswith('~ATH(', charNum)){
+        } elseif (script.startsWith('~ATH(', charNum)){
             closeparenOffset = script.substring(charNum).indexOf(')');
             var loopVar = script.substring(charNum + 5, charNum + closeparenOffset);
             loopVar = loopVar.strip(' \t\n\r');
@@ -174,6 +165,17 @@ export evalScript(script,inObj) {
             } else {
                 console.log('warning/error is undefined: ' + loopVar);
             }
+        } elseif (script.startsWith('}', charNum)){
+            openingTuple = execStack.pop();
+            if(openingTuple[1] == '{') {
+                charNum = openingTuple[0];
+            } else {
+                console.log('Syntax error');
+            }
+        } elseif (script.startsWith('print ', charNum)) {
+            semicolonOffset=script[charNum:].index(';')
+            console.log(script.substring(charNum + 6, charNum + semicolonOffset));
+            charNum += semicolonOffset // +6
         }
     }
 
