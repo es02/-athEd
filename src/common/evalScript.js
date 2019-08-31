@@ -3,6 +3,7 @@ import matchParens from 'matchParens';
 import getObjStr from 'getObjStr';
 import getStrObj from 'getStrObj';
 import textToNextSemiColon from 'textToNextSemiColon';
+import bifurcate from 'bifurcate';
 
 export evalScript(script, inObj) {
     var ATHVars = {};
@@ -19,6 +20,37 @@ export evalScript(script, inObj) {
     var execStack = [];
     var semicolonOffset = 0;
     var matches = [];
+
+    var funCodes = {};
+
+    funCodes['HELLO'] = `
+        print "Hello World.";
+        THIS.DIE(THIS);
+    `;
+
+    funCodes['ADD'] = `
+        import bluh BLAH;
+
+        BIFURCATE ARGS[A,B];
+        BIFURCATE [BLAH,A]ATEMP;
+        BIFURCATE [BLAH,B]BTEMP;
+        BIFURCATE ATEMP[JUNK,ATEMP];
+        BIFURCATE BTEMP[JUNK,BTEMP];
+        BIFURCATE [BLAH,NULL]C;
+        BIFURCATE C[JUNK,C];
+
+        ~ATH(ATEMP){
+            BIFURCATE ATEMP[JUNK,ATEMP];
+            BIFURCATE [BLAH,C]C;
+        }
+
+        ~ATH(BTEMP){
+            BIFURCATE BTEMP[JUNK,BTEMP];
+            BIFURCATE [BLAH,C]C;
+        }
+
+        THIS.DIE(C);
+    `;
 
     while (universe.living) {
         const importTest = '/importf ([^; ]+) as ([^; ]+);/';
