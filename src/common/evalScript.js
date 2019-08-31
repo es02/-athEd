@@ -4,45 +4,16 @@ def evalScript(script,inObj):
 
         (...)
 
-        elif(script.startswith('//',charNum)):
-            nextNewlinePos=script.find('\n',charNum)
-            if '\r' in script[charNum:nextNewlinePos]:
-                nextNewlinePos=script.find('\r',charNum)
-            charNum=nextNewlinePos
-        elif(script.startswith('/*',charNum)):
-            charNum=script.find('*/ /*',charNum) // Added an extra /* to keep the comment block closed
-        elif(script.startswith('PYDEBUG',charNum)):
-            pdb.set_trace()
-            charNum+=5
-        elif(re.match(r'([A-Z0-9_]+) \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);',script[charNum:])!=None):
-            try:
-                matches=re.match(r'([A-Z0-9_]+) \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);',script[charNum:])
-                funName=matches.group(1)
-                #print "the function called '"+funName + "' was called."
-                #print "yeah it works."
-                if funName in funCodes:
-                    theFuncCode=funCodes[funName]
-                    sentInObject=bifurcate(ATHVars[matches.group(2)],ATHVars[matches.group(3)])
-                    ATHVars[matches.group(4)]=evalScript(theFuncCode,sentInObject)
-                else:
-                    print "error: function called '"+funName+"' not recognized"
-                charNum+=len(funName)
-            except:
-                print "function not recognized/ a bug in the interpreter"
-                print matches#re.match(r'([A-Z0-9_]+) \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);',script[charNum:])
-                print "..."
-                charNum+=1
-            #charNum+=1
-        elif(re.match(r'([A-Z0-9_]+) ([^\[\];]*)\[([^\[\];]*),([^\[\];]*)\];',script[charNum:])!=None):
+        elseif (re.match(r'([A-Z0-9_]+) ([^\[\];]*)\[([^\[\];]*),([^\[\];]*)\];',script[charNum:])!=None):
             try:
                 matches=re.match(r'([A-Z0-9_]+) ([^\[\];]*)\[([^\[\];]*),([^\[\];]*)\];',script[charNum:])
-                funName=matches.group(1)
+                funName=matches[1]
                 //#print "the function called '"+funName + "' was called."
                 //#print "yeah it works."
                 if funName in funCodes:
                     theFuncCode=funCodes[funName]
-                    sentInObject=ATHVars[matches.group(2)]#bifurcate(ATHVars[matches.group(2)],ATHVars[matches.group(3)])
-                    ATHVars[matches.group(3)],ATHVars[matches.group(4)]=bifurcate(evalScript(theFuncCode,sentInObject))
+                    sentInObject=ATHVars[matches[2]]#bifurcate(ATHVars[matches[2]],ATHVars[matches[3]])
+                    ATHVars[matches[3]],ATHVars[matches[4]]=bifurcate(evalScript(theFuncCode,sentInObject))
                 else:
                     print "error: function called '"+funName+"' not recognized"
                 charNum+=len(funName)
@@ -55,7 +26,6 @@ def evalScript(script,inObj):
              charNum+=1
              if(charNum > len(script)):
                  THIS.DIE()
-        //#print script[charNum]
     return return_obj
  */
 
@@ -87,6 +57,7 @@ export evalScript(script, inObj) {
         const bif1Test = '/BIFURCATE ([^\[\];]*)\[([^\[\];]*),([^\[\];]*)\];/';
         const bif2Test = '/BIFURCATE \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);/';
         const dieTest = '/([0-9a-zA-Z]+)\.DIE\(([0-9a-zA-Z]*)\);/'
+        const catch1 = '/([A-Z0-9_]+) \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);/';
 
         if (script.startsWith('import ', charNum)) {
             semicolonOffset = script.substring(charNum).indexOf(';');
@@ -136,7 +107,7 @@ export evalScript(script, inObj) {
             charNum += semicolonOffset // +6
         } elseif (script.substring(charNum).test(print2Test)) {
             matches = script.substring(charNum).match(print2Test)
-            console.log(getObjStr(ATHVars[matches.group(1)]))
+            console.log(getObjStr(ATHVars[matches[1]]))
             charNum = script.substring(charNum).indexOf(';');
         } elseif (script.startsWith('INPUT', charNum)) {
             semicolonOffset = script.substring(charNum).indexOf(';')
@@ -217,6 +188,35 @@ export evalScript(script, inObj) {
             }
             ATHVars[varname].DIE()
             charNum = script.substring(charNum).indexOf(';');
+        } elseif (script.startsWith('//',charNum)) {
+            nextNewlinePos = script.substring(charNum).indexOf('\n')
+            if (script.substring(charNum, nextNewlinePos).includes('\r')) {
+                nextNewlinePos = script.substring(charNum).indexOf('\r')
+            }
+            charNum = nextNewlinePos;
+        } elseif (script.startsWith('/*',charNum)) {
+            charNum = script.substring(charNum).indexOf('*/');
+        } elseif (script.substring(charNum).test(catch1)) {
+            try {
+                matches = script.substring(charNum).match(catch1);
+                funName=matches[1];
+                if funName in funCodes:{
+                    var theFuncCode = funCodes[funName];
+                    var sentInObject = bifurcate(
+                        ATHVars[matches[2]],
+                        ATHVars[matches[3]]
+                    );
+                    ATHVars[matches[4]] = evalScript(theFuncCode, sentInObject);
+                } else {
+                    console.log("error: function called '" + funName + "' not recognized");
+                }
+                charNum += funName.length;
+            } catch(e) {
+                console.log("function not recognized/ a bug in the interpreter");
+                console.log(matches);
+                console.log("...");
+                charNum++;
+            }
         }
     }
 

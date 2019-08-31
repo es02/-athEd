@@ -64,8 +64,6 @@ print DONE!;
 THIS.DIE(C);
 """#NOTE:use a better addition algorithm.
 
-NULL_obj=bif.value_obj()
-NULL_obj.DIE()
 
 filename=raw_input()
 filelink=open(filename,'r')
