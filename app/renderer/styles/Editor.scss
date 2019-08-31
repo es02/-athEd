@@ -3,13 +3,35 @@
 .editor-container {
   flex: 1;
   display: flex;
-  background-color: $light-grey;
+  flex-direction: row;
+  background-color: $grey;
+  font-family: monospace;
+}
+
+.line-counter {
+  width: 60px;
+  padding: 20px;
+  font-size: 14pt;
+  font-weight: 600;
+  color: $light-grey;
+  line-height: 24pt;
+
+  p {
+    margin: 0;
+    padding: 0;
+    text-align: right;
+  }
 }
 
 .editor {
   display: block;
   flex: 1;
-  padding: 10px;
-  line-height: 40px;
-  background-color: $light-grey;
+  padding: 20px;
+  font-size: 14pt;
+  font-weight: 600;
+  color: $white;
+  line-height: 24pt;
+  resize: none;
+  background-color: $grey;
+  border: none;
 }
