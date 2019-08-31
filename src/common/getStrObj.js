@@ -5,8 +5,8 @@ def getStrObj(theStr):
     else:
         return bifurcate(getCharObj(theStr[0]),getStrObj(theStr[1:]))
 */
-import getCharObj from 'getCharObj';
-import bifurcate from 'interpreter';
+import getCharObj from 'getCharObj.js';
+import bifurcate from 'interpreter.js';
 
 /**
  * [getStrObj description]
