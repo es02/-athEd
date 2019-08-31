@@ -22,16 +22,6 @@ def bifurcate(valueA,valueB=False):
         return bif.bifurcate(valueA)
 
 /*
-def textToNextSemicolon(text,start=0):
-    semicolonOffset=text.find(';',start)
-    return text[start:semicolonOffset]
-*/
-function textToNextSemicolon (text, start = 0) {
-  var semicolonOffset = text.substring(0, start).indexOf(';');
-  return text.substring(start, semicolonOffset);
-}
-
-/*
 charObjs={}
 def getCharObj(theChar):
     if(theChar in charObjs):
@@ -40,23 +30,6 @@ def getCharObj(theChar):
         theCharObj=bif.value_obj()
         charObjs[theChar]=theCharObj
         return theCharObj
-def getStrObj(theStr):
-    if(len(theStr)==0):
-        return NULL_obj
-    else:
-        return bifurcate(getCharObj(theStr[0]),getStrObj(theStr[1:]))
-
-def getObjStr(theObj):
-    outStr=""
-    theObj2=theObj
-    while(theObj2.living):
-        (leftObj,rightObj)=bifurcate(theObj2)
-        for char in charObjs:
-            if(charObjs[char]==leftObj):
-                outStr+=char
-                break
-        theObj2=rightObj
-    return outStr
 
 funCodes={}
 funCodes['HELLO']="""
