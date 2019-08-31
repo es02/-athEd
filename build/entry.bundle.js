@@ -41,7 +41,7 @@
 /******/ 	}
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "481864698802245c9267"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "b6d3aa103024bbcae728"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
 /******/ 	
@@ -20126,7 +20126,7 @@
 	
 	
 	// module
-	exports.push([module.id, ".container {\n  width: 100vw;\n  height: 90vh;\n  display: flex;\n  flex-direction: column;\n  font-family: sans-serif;\n  font-size: 12pt;\n  color: #121212; }\n\n.sub-container {\n  position: relative;\n  flex: 1;\n  display: flex;\n  flex-direction: row; }\n\nbody {\n  background: #f5f5f5; }\n", ""]);
+	exports.push([module.id, ".container {\n  width: 100vw;\n  height: 100vh;\n  padding: 0;\n  margin: 0;\n  display: flex;\n  flex-direction: column;\n  font-family: sans-serif;\n  font-size: 12pt;\n  color: #121212;\n  overflow: hidden; }\n\n.sub-container {\n  position: relative;\n  flex: 1;\n  display: flex;\n  flex-direction: row; }\n\nbody {\n  margin: 0;\n  padding: 0;\n  background: #f5f5f5; }\n", ""]);
 	
 	// exports
 
@@ -20529,7 +20529,7 @@
 	
 	
 	// module
-	exports.push([module.id, "header {\n  border-bottom: solid 4px #121212; }\n\nh1 {\n  font-size: 3em; }\n", ""]);
+	exports.push([module.id, "header {\n  padding-left: 20px;\n  border-bottom: solid 4px #333; }\n\nh1 {\n  font-size: 2em; }\n", ""]);
 	
 	// exports
 
@@ -20575,6 +20575,30 @@
 	            return _react2.default.createElement(
 	                'div',
 	                { className: 'editor-container' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'line-counter' },
+	                    _react2.default.createElement(
+	                        'p',
+	                        null,
+	                        '1'
+	                    ),
+	                    _react2.default.createElement(
+	                        'p',
+	                        null,
+	                        '2'
+	                    ),
+	                    _react2.default.createElement(
+	                        'p',
+	                        null,
+	                        '3'
+	                    ),
+	                    _react2.default.createElement(
+	                        'p',
+	                        null,
+	                        '4'
+	                    )
+	                ),
 	                _react2.default.createElement('textarea', { className: 'editor' })
 	            );
 	        }
@@ -20620,7 +20644,7 @@
 	
 	
 	// module
-	exports.push([module.id, ".editor-container {\n  flex: 1;\n  display: flex;\n  background-color: #999; }\n\n.editor {\n  display: block;\n  flex: 1;\n  padding: 10px;\n  line-height: 40px;\n  background-color: #999; }\n", ""]);
+	exports.push([module.id, ".editor-container {\n  flex: 1;\n  display: flex;\n  flex-direction: row;\n  background-color: #666;\n  font-family: monospace; }\n\n.line-counter {\n  width: 60px;\n  padding: 20px;\n  font-size: 14pt;\n  font-weight: 600;\n  color: #999;\n  line-height: 24pt; }\n  .line-counter p {\n    margin: 0;\n    padding: 0;\n    text-align: right; }\n\n.editor {\n  display: block;\n  flex: 1;\n  padding: 20px;\n  font-size: 14pt;\n  font-weight: 600;\n  color: #f5f5f5;\n  line-height: 24pt;\n  resize: none;\n  background-color: #666;\n  border: none; }\n", ""]);
 	
 	// exports
 
@@ -20650,6 +20674,7 @@
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	// import FileBrowser, { Icons } from 'react-keyed-file-browser';
 	
 	var Sidebar = function (_Component) {
 	    _inherits(Sidebar, _Component);
@@ -20662,6 +20687,138 @@
 	
 	    _createClass(Sidebar, [{
 	        key: 'render',
+	
+	        // constructor() {
+	        //     super();
+	
+	        //     state = {
+	        //         files: [
+	        //             {
+	        //               key: 'photos/animals/cat in a hat.png',
+	        //             },
+	        //             {
+	        //               key: 'photos/animals/kitten_ball.png',
+	        //             },
+	        //             {
+	        //               key: 'photos/animals/elephants.png',
+	        //             },
+	        //             {
+	        //               key: 'photos/funny fall.gif',
+	        //             },
+	        //             {
+	        //               key: 'photos/holiday.jpg',
+	        //             },
+	        //             {
+	        //               key: 'documents/letter chunks.doc',
+	        //             },
+	        //             {
+	        //               key: 'documents/export.pdf',
+	        //             },
+	        //           ]
+	        //     };
+	        // }
+	
+	        // handleCreateFolder(key) {
+	        //     this.setState(state => {
+	        //         state.files = state.files.concat([{
+	        //             key: key,
+	        //         }])
+	        //         return state
+	        //     })
+	        // }
+	
+	        // handleCreateFiles(files, prefix) {
+	        //     this.setState(state => {
+	        //         const newFiles = files.map((file) => {
+	        //         let newKey = prefix
+	        //         if (prefix !== '' && prefix.substring(prefix.length - 1, prefix.length) !== '/') {
+	        //             newKey += '/'
+	        //         }
+	        //         newKey += file.name
+	        //         return {
+	        //             key: newKey
+	        //         }
+	        //         })
+	
+	        //         const uniqueNewFiles = []
+	        //         newFiles.map((newFile) => {
+	        //         let exists = false
+	        //         state.files.map((existingFile) => {
+	        //             if (existingFile.key === newFile.key) {
+	        //             exists = true
+	        //             }
+	        //         })
+	        //         if (!exists) {
+	        //             uniqueNewFiles.push(newFile)
+	        //         }
+	        //         })
+	        //         state.files = state.files.concat(uniqueNewFiles)
+	        //         return state
+	        //     })
+	        // }
+	
+	        // handleRenameFolder(oldKey, newKey) {
+	        //     this.setState(state => {
+	        //         const newFiles = []
+	        //         state.files.map((file) => {
+	        //         if (file.key.substr(0, oldKey.length) === oldKey) {
+	        //             newFiles.push({
+	        //             file,
+	        //             key: file.key.replace(oldKey, newKey)
+	        //             })
+	        //         } else {
+	        //             newFiles.push(file)
+	        //         }
+	        //         })
+	        //         state.files = newFiles
+	        //         return state
+	        //     })
+	        // }
+	
+	        // handleRenameFile(oldKey, newKey) {
+	        //     this.setState(state => {
+	        //         const newFiles = []
+	        //         state.files.map((file) => {
+	        //         if (file.key === oldKey) {
+	        //             newFiles.push({
+	        //             file,
+	        //             key: newKey
+	        //             })
+	        //         } else {
+	        //             newFiles.push(file)
+	        //         }
+	        //         })
+	        //         state.files = newFiles
+	        //         return state
+	        //     })
+	        // }
+	
+	        // handleDeleteFolder(folderKey) {
+	        //     this.setState(state => {
+	        //         const newFiles = []
+	        //         state.files.map((file) => {
+	        //             if (file.key.substr(0, folderKey.length) !== folderKey) {
+	        //                 newFiles.push(file)
+	        //             }
+	        //         })
+	        //         state.files = newFiles
+	        //         return state
+	        //     })
+	        // }
+	
+	        // handleDeleteFile(fileKey) {
+	        //     this.setState(state => {
+	        //         const newFiles = []
+	        //         state.files.map((file) => {
+	        //             if (file.key !== fileKey) {
+	        //                 newFiles.push(file)
+	        //             }
+	        //         })
+	        //         state.files = newFiles
+	        //         return state
+	        //     })
+	        // }
+	
 	        value: function render() {
 	            return _react2.default.createElement('div', { className: 'sidebar' });
 	        }
@@ -20707,7 +20864,7 @@
 	
 	
 	// module
-	exports.push([module.id, ".sidebar {\n  width: 200px;\n  border: 2px solid #333; }\n", ""]);
+	exports.push([module.id, ".sidebar {\n  width: 300px;\n  border-right: 2px solid #333; }\n", ""]);
 	
 	// exports
 

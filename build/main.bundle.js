@@ -41,7 +41,7 @@
 /******/ 	}
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "481864698802245c9267"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "b6d3aa103024bbcae728"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
 /******/ 	
@@ -591,7 +591,7 @@
 	    mainWindow.loadURL('file://' + process.cwd() + '/app/renderer/public/index.html');
 	
 	    // Open the DevTools.
-	    mainWindow.webContents.openDevTools();
+	    // mainWindow.webContents.openDevTools();
 	
 	    // Emitted when the window is closed.
 	    mainWindow.on('closed', function () {

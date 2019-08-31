@@ -1,9 +1,10 @@
 @import 'colors';
 
 header {
-    border-bottom: solid 4px $black;
+    padding-left: 20px;
+    border-bottom: solid 4px #333;
 }
 
 h1 {
-    font-size: 3em;
+    font-size: 2em;
 }
