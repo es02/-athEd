@@ -41,7 +41,7 @@
 /******/ 	}
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "481864698802245c9267"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "d320310d011b5c6f8546"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
 /******/ 	
@@ -562,7 +562,7 @@
 
 	'use strict';
 	
-	var _electron = __webpack_require__(172);
+	var _electron = __webpack_require__(176);
 	
 	var _electron2 = _interopRequireDefault(_electron);
 	
@@ -625,7 +625,7 @@
 
 /***/ }),
 
-/***/ 172:
+/***/ 176:
 /***/ (function(module, exports) {
 
 	module.exports = require("electron");
