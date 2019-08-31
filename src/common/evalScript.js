@@ -4,17 +4,6 @@ def evalScript(script,inObj):
 
         (...)
 
-
-        elif(re.match(r'PRINT2 ([^\[\];]*);',script[charNum:])!=None):
-            matches=re.match(r'PRINT2 ([^\[\];]*);',script[charNum:])
-            print getObjStr(ATHVars[matches.group(1)])
-            charNum=script.find(';',charNum)
-        elif(script.startswith('INPUT',charNum)):
-            semicolonOffset=script[charNum:].index(';')
-            varname=script[charNum+6:charNum+semicolonOffset]
-            #print 'INPUT varname was "'+varname+'"'
-            ATHVars[varname]=getStrObj(raw_input(':'))
-            charNum+=semicolonOffset
         elif(re.match(r'BIFURCATE ([^\[\];]*)\[([^\[\];]*),([^\[\];]*)\];',script[charNum:])!=None):
             #print("binurcate the thing!")
             matches=re.match(r'BIFURCATE ([^\[\];]*)\[([^\[\];]*),([^\[\];]*)\];',script[charNum:])
@@ -113,8 +102,8 @@ def evalScript(script,inObj):
     return return_obj
  */
 
-import 'value_obj' from 'bif';
-import 'matchParens' from 'matchParens';
+import value_obj from 'bif';
+import matchParens from 'matchParens';
 
 export evalScript(script,inObj) {
     var ATHVars = {};
@@ -126,12 +115,15 @@ export evalScript(script,inObj) {
 
     var charNum = 0;
     var execStack = [];
+    var semicolonOffset = 0;
+    var matches = [];
 
-    while(universe.living){
+    while (universe.living) {
         const importTest = '/importf ([^; ]+) as ([^; ]+);/';
+        const print2Test = '/PRINT2 ([^\[\];]*);/';
 
         if (script.startsWith('import ', charNum)) {
-            var semicolonOffset = script.substring(charNum).indexOf(';');
+            semicolonOffset = script.substring(charNum).indexOf(';');
             var importStatementStr = script.substring(charNum, charNum+semicolonOffset);
             var importStatementList = importStatementStr.split(' ');
             if(!ATHVars.includes(importStatementList[importStatementList.length - 1])){
@@ -166,16 +158,25 @@ export evalScript(script,inObj) {
                 console.log('warning/error is undefined: ' + loopVar);
             }
         } elseif (script.startsWith('}', charNum)){
-            openingTuple = execStack.pop();
+            var openingTuple = execStack.pop();
             if(openingTuple[1] == '{') {
                 charNum = openingTuple[0];
             } else {
                 console.log('Syntax error');
             }
         } elseif (script.startsWith('print ', charNum)) {
-            semicolonOffset=script[charNum:].index(';')
+            semicolonOffset = script.substring(charNum).indexOf(';')
             console.log(script.substring(charNum + 6, charNum + semicolonOffset));
             charNum += semicolonOffset // +6
+        } elseif (script.substring(charNum).test(print2Test)) {
+            matches = script.substring(charNum).match(print2Test)
+            console.log(getObjStr(ATHVars[matches.group(1)]))
+            charNum = script.substring(charNum).indexOf(';');
+        } elseif (script.startsWith('INPUT', charNum)) {
+            semicolonOffset = script.substring(charNum).indexOf(';')
+            var varname = script.substring(charNum + 6, charNum + semicolonOffset);
+            ATHVars[varname] = getStrObj(raw_input(':'));
+            charNum+=semicolonOffset
         }
     }
 
