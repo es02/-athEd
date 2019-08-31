@@ -1,0 +1,15 @@
+@import 'colors';
+
+.editor-container {
+  flex: 1;
+  display: flex;
+  background-color: $light-grey;
+}
+
+.editor {
+  display: block;
+  flex: 1;
+  padding: 10px;
+  line-height: 40px;
+  background-color: $light-grey;
+}
