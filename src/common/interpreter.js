@@ -21,4 +21,5 @@ var filename = args[0];
 var fs = require('fs');
 var script = fs.readFileSync(filename).toString();
 result_obj = evalScript(script, NULL_obj);
-input("press enter to close");
+
+throw new Error();
