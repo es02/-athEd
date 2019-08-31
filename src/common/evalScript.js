@@ -162,18 +162,19 @@ export evalScript(script,inObj) {
             charNum = script.substring(charNum).indexOf(';');
         } elseif (script.startswith('~ATH(', charNum)){
             closeparenOffset = script.substring(charNum).indexOf(')');
-            var loopVar = script[charNum+5:charNum+closeparenOffset]
-            loopVar = loopVar.strip(' \t\n\r')
-            if (ATHVars.includes(loopVar)) :
+            var loopVar = script.substring(charNum + 5, charNum + closeparenOffset);
+            loopVar = loopVar.strip(' \t\n\r');
+            if (ATHVars.includes(loopVar)) {
                 if (ATHVars[loopVar].living) {
-                    execStack.append((charNum,'{'))
-                    charNum += closeparenOffset
+                    execStack.push({charNum: '{'});
+                    charNum += closeparenOffset;
                 } else{
-                    charNum = matchParens(script,charNum,'{','}')+2
+                    charNum = matchParens(script,charNum,'{','}') + 2;
                 }
-            }else{
-                console.log('warning/error: \"{0}\" is undefined'.format(loopVar))
+            } else {
+                console.log('warning/error is undefined: ' + loopVar);
             }
+        }
     }
 
     return return_obj
