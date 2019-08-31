@@ -12,7 +12,7 @@ def getObjStr(theObj):
     return outStr
 */
 
-import bifurcate from 'bif';
+import bifurcate from 'bifurcate';
 
 /**
  * [getObjStr description]

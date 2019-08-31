@@ -6,7 +6,7 @@ def getStrObj(theStr):
         return bifurcate(getCharObj(theStr[0]),getStrObj(theStr[1:]))
 */
 import getCharObj from 'getCharObj';
-import bifurcate from 'interpreter';
+import bifurcate from 'bifurcate';
 
 /**
  * [getStrObj description]
