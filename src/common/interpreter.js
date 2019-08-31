@@ -67,7 +67,7 @@ function matchParens (text, start, openStr, closeStr) {
         firstChar = false;
       }
     }
-    charNum += 1;
+    charNum++;
   }
   return charNum - 1;
 }
@@ -78,7 +78,7 @@ function evalScript(script, inObj) {
     // var NULL_obj = new value_obj();
     // NULL_obj.die();
 
-    ATHVars['universe'] = universe;
+    ATHVars['THIS'] = universe;
     ATHVars['NULL'] = NULL_obj;
     ATHVars['ARGS'] = inObj;
     var return_obj = NULL_obj;
@@ -86,7 +86,6 @@ function evalScript(script, inObj) {
     var charNum = 0;
     var execStack = [];
     var semicolonOffset = 0;
-    var matches = [];
 
     var funCodes = {};
 
@@ -121,15 +120,15 @@ function evalScript(script, inObj) {
 
     while (universe.living) {
         console.log(charNum)
-        console.log(script.substring(charNum, charNum + 6))
+        // console.log(script.substring(charNum, charNum + 6))
 
-        const importTest = RegExp('importf ([^; ]+) as ([^; ]+);');
-        const print2Test = RegExp('PRINT2 ([^\[\];]*);');
-        const bif1Test = /BIFURCATE ([^\[\];]*)\[([^\[\];]*),([^\[\];]*)\];/;
-        const bif2Test = /BIFURCATE \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);/;
-        const dieTest = RegExp('([0-9a-zA-Z]+)\.DIE\(([0-9a-zA-Z]*)\);');
-        const catch1 = /([A-Z0-9_]+) \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);/;
-        const catch2 = /([A-Z0-9_]+) ([^\[\];]*)\[([^\[\];]*),([^\[\];]*)\];/;
+        const importTest = RegExp('^importf ([^; ]+) as ([^; ]+);');
+        const print2Test = RegExp('^PRINT2 ([^\[\];]*);');
+        const bif1Test = /^BIFURCATE ([^\[\];]*)\[([^\[\];]*),([^\[\];]*)\];/;
+        const bif2Test = /^BIFURCATE \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);/;
+        const dieTest = RegExp('^([0-9a-zA-Z]+)\.DIE\(([0-9a-zA-Z]*)\);');
+        const catch1 = /^([A-Z0-9_]+) \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);/;
+        const catch2 = /^([A-Z0-9_]+) ([^\[\];]*)\[([^\[\];]*),([^\[\];]*)\];/;
 
         if (script.startsWith('import ', charNum)) {
             semicolonOffset = script.substring(charNum).indexOf(';');
@@ -140,7 +139,7 @@ function evalScript(script, inObj) {
             }
             charNum += semicolonOffset + 2;
         } else if (importTest.test(script.substring(charNum))) {
-            matches = script.substring(charNum).match(importTest);
+            var matches = script.substring(charNum).match(importTest);
             var importfFilename = matches[1];
 
             try {
@@ -156,9 +155,16 @@ function evalScript(script, inObj) {
             closeparenOffset = script.substring(charNum).indexOf(')');
             var loopVar = script.substring(charNum + 5, charNum + closeparenOffset);
             loopVar = loopVar.replace(/(^[ '\^\$\*#&]+)|([ '\^\$\*#&]+$)/g, '');
+            // console.log(loopVar)
+            // console.log(ATHVars);
             if (ATHVars.hasOwnProperty(loopVar)) {
+
+                // console.log(ATHVars)
+                // console.log(loopVar)
                 if (ATHVars[loopVar].living) {
-                    execStack.push({charNum: '{'});
+                    execStack.push([charNum, '{']);
+                    // console.log("pushed to execstack")
+                    // console.log(execStack)
                     charNum += closeparenOffset;
                 } else{
                     charNum = matchParens(script,charNum,'{','}') + 2;
@@ -167,8 +173,10 @@ function evalScript(script, inObj) {
                 console.log('warning/error is undefined: ' + loopVar);
             }
         } else if (script.startsWith('}', charNum)){
+            //console.log(execStack)
             var openingTuple = execStack.pop();
-            if(openingTuple[1] == '{') {
+            //console.log("tuple: " + openingTuple)
+            if (openingTuple[1] == '{') {
                 charNum = openingTuple[0];
             } else {
                 console.log('Syntax error');
@@ -178,7 +186,7 @@ function evalScript(script, inObj) {
             console.log(script.substring(charNum + 6, charNum + semicolonOffset));
             charNum += semicolonOffset + 2; // +6
         } else if (print2Test.test(script.substring(charNum))) {
-            matches = script.substring(charNum).match(print2Test);
+            var matches = script.substring(charNum).match(print2Test);
             console.log(getObjStr(ATHVars[matches[1]]))
             charNum = script.substring(charNum).indexOf(';') + 2;
         } else if (script.startsWith('INPUT', charNum)) {
@@ -189,21 +197,22 @@ function evalScript(script, inObj) {
             ATHVars[varname] = getStrObj(name);
             charNum += semicolonOffset + 2;
         } else if (bif1Test.test(script.substring(charNum))) {
-            matches = script.substring(charNum).match(bif1Test);
-            console.log("biffirc1 val:" + matches[1])
-            console.log("biffirc1 athval:" + ATHVars[matches[1]])
-            var foo = bifurcate(ATHVars[matches[1]]);
-            console.log("foo:" + foo[0])
-            ATHVars[matches[2]] = foo[0];
-            ATHVars[matches[3]] = foo[1];
+            var matches = script.substring(charNum).match(bif1Test);
+            console.log("BIFURCATE TYPE1")
+            console.log(matches[1])
+            console.log(ATHVars[matches[1]])
+
+            var foo = bif(ATHVars[matches[1]]);
+            ATHVars[matches[2]] = foo.leftHalf;
+            ATHVars[matches[3]] = foo.rightHalf;
+
+            console.log(ATHVars[matches[2]])
             charNum += script.substring(charNum).indexOf(';') + 2;
         } else if (bif2Test.test(script.substring(charNum))) {
-            matches = script.substring(charNum).match(bif2Test);
-            console.log("bif2 matches 1-3: ")
-            console.log(matches[1])
-            console.log(matches[2])
-            console.log(matches[3])
-            ATHVars[matches[3]] = bifurcate(
+            var matches = script.substring(charNum).match(bif2Test);
+            // console.log(ATHVars)
+            // console.log(matches)
+            ATHVars[matches[3]] = bif(
                 ATHVars[matches[1]],
                 ATHVars[matches[2]]
             )
@@ -238,10 +247,7 @@ function evalScript(script, inObj) {
                         charNum + closeSquareOffset + 1,
                         charNum + semicolonOffset
                     );
-                    console.log("comb: " + combinedName)
-                    console.log(leftHalf)
-                    console.log(rightHalf)
-                    ATHVars[combinedName] = bifurcate(
+                    ATHVars[combinedName] = bif(
                         ATHVars[leftHalf],
                         ATHVars[rightHalf]
                     );
@@ -258,16 +264,13 @@ function evalScript(script, inObj) {
                         charNum + commaOffset + 1,
                         charNum + closeSquareOffset
                     );
-                    console.log("split: " + toSplitName)
-                    console.log(leftHalf)
-                    console.log(rightHalf)
-                    var foo = bifurcate(ATHVars[toSplitName]);
-                    ATHVars[leftHalf] = foo[0];
-                    ATHVars[rightHalf] = foo[1];
+                    var foo = bif(ATHVars[toSplitName]);
+                    ATHVars[leftHalf] = foo.leftHalf;
+                    ATHVars[rightHalf] = foo.rightHalf;
                 }
             }
         } else if (dieTest.test(script.substring(charNum))) {
-            matches = script.substring(charNum).match(dieTest);
+            var matches = script.substring(charNum).match(dieTest);
             var varname = matches[1]
             var argvarname = matches[2]
             if (argvarname) {
@@ -283,13 +286,13 @@ function evalScript(script, inObj) {
             charNum = nextNewlinePos;
         } else if (script.startsWith('/*',charNum)) {
             charNum = script.substring(charNum).indexOf('*/') + 2;
-        } else if (script.substring(charNum).test(catch1)) {
+        } else if (catch1.test(script.substring(charNum))) {
             try {
-                matches = script.substring(charNum).match(catch1);
+                var matches = script.substring(charNum).match(catch1);
                 funName = matches[1];
                 if (funCodes.includes(funName)) {
                     var theFuncCode = funCodes[funName];
-                    var sentInObject = bifurcate(
+                    var sentInObject = bif(
                         ATHVars[matches[2]],
                         ATHVars[matches[3]]
                     );
@@ -306,14 +309,14 @@ function evalScript(script, inObj) {
             }
         } else if (catch2.test(script.substring(charNum))) {
             try {
-                matches = script.substring(charNum).match(catch2);
+                var matches = script.substring(charNum).match(catch2);
                 var funName = matches[1];
                 if (funCodes.includes(funName)) {
                     var theFuncCode = funCodes[funName];
                     var sentInObject = ATHVars[matches[2]];
-                    var foo = bifurcate(evalScript(theFuncCode, sentInObject));
-                    ATHVars[matches[3]] = foo[0];
-                    ATHVars[matches[4]] = foo[1];
+                    var foo = bif(evalScript(theFuncCode, sentInObject));
+                    ATHVars[matches[3]] = foo.leftHalf;
+                    ATHVars[matches[4]] = foo.rightHalf;
                 } else {
                     console.log(
                         "error: function called '" +

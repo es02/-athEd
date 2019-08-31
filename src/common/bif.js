@@ -24,10 +24,13 @@ var value_obj = class {
             rightHalf = new value_obj(this);
             rightHalf.formsRightOf.push(this);
             rightHalf.whichHalve = [0,1];
-            this.parts = (leftHalf,rightHalf);
+            this.parts = {'leftHalf': leftHalf, 'rightHalf': rightHalf};
         }
 
-        return this.parts;
+        return {
+            'leftHalf': this.parts.leftHalf,
+            'rightHalf': this.parts.rightHalf
+        };
     }
     die() {
         this.living=false;
@@ -48,9 +51,12 @@ function bifurcate(value) {
         rightHalf = new value_obj(value);
         rightHalf.formsRightOf.push(value);
         rightHalf.whichHalve = [0,1];
-        value.parts = [leftHalf, rightHalf];
+        value.parts = {'leftHalf': leftHalf, 'rightHalf': rightHalf};
     }
-    return value.parts;
+    return {
+        'leftHalf': value.parts.leftHalf,
+        'rightHalf': value.parts.rightHalf
+    };
 }
 
 /**
@@ -61,19 +67,19 @@ function bifurcate(value) {
  */
 function unbifurcate(valueA, valueB) {
     var value = valueA.formsLeftOf.forEach(function(value) {
-      if (valueB.formsRight.includes(value)) {
-          return value;
-      }
+        // If this is a bifurcated pair just return the original pair
+        if (
+            typeof value !== 'undefined' &&
+            typeof valueB.formsRightOf !== 'undefined' &&
+            valueB.formsRightOf.includes(value)
+        ) {
+            return value;
+        }
     })
-    var combined = new value_obj(valueA, valueB);
-    valueA.formsLeftOf.push(combined);
-    valueB.formsRightOf.push(combined);
+    var parts = {'leftHalf': valueA, 'rightHalf': valueB};
+    var combined = new value_obj(parts);
 
-    if (value) {
-        return value;
-    } else {
-        return combined;
-    }
+    return combined;
 }
 
 module.exports = {
