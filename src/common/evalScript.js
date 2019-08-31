@@ -1,34 +1,3 @@
-/*
-def evalScript(script,inObj):
-    while(THIS.living):
-
-        (...)
-
-        elseif (re.match(r'([A-Z0-9_]+) ([^\[\];]*)\[([^\[\];]*),([^\[\];]*)\];',script[charNum:])!=None):
-            try:
-                matches=re.match(r'([A-Z0-9_]+) ([^\[\];]*)\[([^\[\];]*),([^\[\];]*)\];',script[charNum:])
-                funName=matches[1]
-                //#print "the function called '"+funName + "' was called."
-                //#print "yeah it works."
-                if funName in funCodes:
-                    theFuncCode=funCodes[funName]
-                    sentInObject=ATHVars[matches[2]]#bifurcate(ATHVars[matches[2]],ATHVars[matches[3]])
-                    ATHVars[matches[3]],ATHVars[matches[4]]=bifurcate(evalScript(theFuncCode,sentInObject))
-                else:
-                    print "error: function called '"+funName+"' not recognized"
-                charNum+=len(funName)
-            except:
-                print "function not recognized/ a bug in the interpreter"
-                print matches#re.match(r'([A-Z0-9_]+) \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);',script[charNum:])
-                print "..."
-                charNum+=1
-        else:
-             charNum+=1
-             if(charNum > len(script)):
-                 THIS.DIE()
-    return return_obj
- */
-
 import value_obj from 'bif';
 import matchParens from 'matchParens';
 import getObjStr from 'getObjStr';
@@ -58,6 +27,7 @@ export evalScript(script, inObj) {
         const bif2Test = '/BIFURCATE \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);/';
         const dieTest = '/([0-9a-zA-Z]+)\.DIE\(([0-9a-zA-Z]*)\);/'
         const catch1 = '/([A-Z0-9_]+) \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);/';
+        const catch2 = '/([A-Z0-9_]+) ([^\[\];]*)\[([^\[\];]*),([^\[\];]*)\];/';
 
         if (script.startsWith('import ', charNum)) {
             semicolonOffset = script.substring(charNum).indexOf(';');
@@ -199,8 +169,8 @@ export evalScript(script, inObj) {
         } elseif (script.substring(charNum).test(catch1)) {
             try {
                 matches = script.substring(charNum).match(catch1);
-                funName=matches[1];
-                if funName in funCodes:{
+                funName = matches[1];
+                if (funCodes.includes(funName)) {
                     var theFuncCode = funCodes[funName];
                     var sentInObject = bifurcate(
                         ATHVars[matches[2]],
@@ -212,13 +182,41 @@ export evalScript(script, inObj) {
                 }
                 charNum += funName.length;
             } catch(e) {
-                console.log("function not recognized/ a bug in the interpreter");
+                console.log("function not recognized");
                 console.log(matches);
                 console.log("...");
                 charNum++;
             }
+        } elseif (script.substring(charNum).test(catch2)) {
+            try {
+                matches = script.substring(charNum).match(catch2);
+                var funName = matches[1];
+                if (funCodes.includes(funName)) {
+                    var theFuncCode = funCodes[funName];
+                    var sentInObject = ATHVars[matches[2]];
+                    var foo = bifurcate(evalScript(theFuncCode, sentInObject));
+                    ATHVars[matches[3]] = foo.parts.leftObj;
+                    ATHVars[matches[4]] = foo.parts.rightObj;
+                } else {
+                    console.log(
+                        "error: function called '" +
+                        funName +
+                        "' not recognized"
+                    );
+                }
+                charNum += funName.length;
+            } catch(e) {
+                console.log("function not recognized");
+                console.log(matches);
+                console.log("...");
+                charNum++;
+            }
+        } else {
+             charNum++;
+             if (charNum > script.length) {
+                 universe.DIE();
+             }
         }
     }
-
-    return return_obj
+    return return_obj;
 }
