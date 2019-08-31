@@ -4,17 +4,6 @@ def evalScript(script,inObj):
 
         (...)
 
-        elif(re.match(r'([0-9a-zA-Z]+)\.DIE\(([0-9a-zA-Z]*)\);',script[charNum:])!=None):#script[charNum:script[charNum:].find(';')].endswith('.DIE()')):
-            matches=re.match(r'([0-9a-zA-Z]+)\.DIE\(([0-9a-zA-Z]*)\);',script[charNum:])#.group(1)
-            varname=matches.group(1)
-            argvarname=matches.group(2)
-            if argvarname:
-                #print("argvarname is " +argvarname)
-                return_obj=ATHVars[argvarname]
-            #print "found .DIE(); statement! Variable name is "+varname
-            ATHVars[varname].DIE()
-            charNum=script.find(';',charNum)
-            #print varname+"killed"
         elif(script.startswith('//',charNum)):
             nextNewlinePos=script.find('\n',charNum)
             if '\r' in script[charNum:nextNewlinePos]:
@@ -79,6 +68,9 @@ import textToNextSemiColon from 'textToNextSemiColon';
 export evalScript(script, inObj) {
     var ATHVars = {};
     var universe = new value_obj();
+    var NULL_obj = new value_obj();
+    NULL_obj.DIE();
+
     ATHVars['universe'] = universe;
     ATHVars['NULL'] = NULL_obj;
     ATHVars['ARGS'] = inObj;
@@ -94,6 +86,7 @@ export evalScript(script, inObj) {
         const print2Test = '/PRINT2 ([^\[\];]*);/';
         const bif1Test = '/BIFURCATE ([^\[\];]*)\[([^\[\];]*),([^\[\];]*)\];/';
         const bif2Test = '/BIFURCATE \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);/';
+        const dieTest = '/([0-9a-zA-Z]+)\.DIE\(([0-9a-zA-Z]*)\);/'
 
         if (script.startsWith('import ', charNum)) {
             semicolonOffset = script.substring(charNum).indexOf(';');
@@ -215,6 +208,15 @@ export evalScript(script, inObj) {
                     ATHVars[rightHalf] = foo.parts.rightObj;
                 }
             }
+        } elseif (script.substring(charNum).test(dieTest)) {
+            matches = script.substring(charNum).match(dieTest);
+            var varname = matches[1]
+            var argvarname = matches[2]
+            if argvarname {
+                return_obj = ATHVars[argvarname]
+            }
+            ATHVars[varname].DIE()
+            charNum = script.substring(charNum).indexOf(';');
         }
     }
 
