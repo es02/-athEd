@@ -40,6 +40,7 @@ var value_obj = class {
  * @return {value_obj}       [description]
  */
 function bifurcate(value) {
+    console.log("biffirc val: " + value);
     if (!value.hasOwnProperty('parts') || value.parts.length === 0) {
         let leftHalf = new value_obj(value);
         leftHalf.formsLeftOf.push(value);
@@ -47,9 +48,9 @@ function bifurcate(value) {
         rightHalf = new value_obj(value);
         rightHalf.formsRightOf.push(value);
         rightHalf.whichHalve = [0,1];
-        value.parts = (leftHalf,rightHalf);
+        value.parts = [leftHalf, rightHalf];
     }
-    return self.parts;
+    return value.parts;
 }
 
 /**
