@@ -1,6 +1,6 @@
 print input text:;
 INPUT A;
-print The text you entered had length equal to 0;
+print The text you entered had length equal to 1;
 BIFURCATE A[D,A2];
 BIFURCATE [D,A2]A2;
 ~ATH(A2){

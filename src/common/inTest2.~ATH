@@ -1,13 +1,3 @@
-print input text:;
-INPUT A;
-print The text you entered had length equal to 0;
-BIFURCATE A[D,A2];
-BIFURCATE [D,A2]A2;
-~ATH(A2){
-    print +1;
-    BIFURCATE A2[D,A2];
-}
-print yeah;
 BIFURCATE [NULL,NULL]2NULL;
 print input some text;
 INPUT B;
@@ -20,6 +10,11 @@ BIFURCATE [B1,EQT]TB;
 BIFURCATE [C1,EQT]TC;
 TB.DIE();
 import ANS REQ;
+// comments are broken
+/*
+This check is in-fact broken
+And always returns false
+*/
 ~ATH(TC){
     print The first characters were not the same.;
     BIFURCATE 2NULL[TC,REQ];   
@@ -27,4 +22,4 @@ import ANS REQ;
 ~ATH(REQ){
     print The first characters WERE the same!;
     BIFURCATE 2NULL[REQ,JUNK];
-    }
+}
