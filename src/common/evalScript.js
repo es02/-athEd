@@ -1,24 +1,8 @@
 /*
 def evalScript(script,inObj):
     while(THIS.living):
-        
-        elif(script.startswith('~ATH(',charNum)):
-            closeparenOffset=script[charNum:].index(')')
-            loopVar=script[charNum+5:charNum+closeparenOffset]
-            loopVar=loopVar.strip(' \t\n\r')
-            #print "reached ~ATH command, loopVar is "+loopVar
-            if(loopVar in ATHVars):
-                if(ATHVars[loopVar].living):
-                    execStack.append((charNum,'{'))
-                    charNum+=closeparenOffset
-                    #print "loop on "+loopVar
-                else:
-                    #print "parenmatch jump from "+str(charNum)
-                    charNum=matchParens(script,charNum,'{','}')+2
-                    #print "parenmatch jumped to char:"+str(charNum)+" which was"+script[charNum]
-                    #print "loopVar was "+loopVar
-            else:
-                print('warning/error: \"{0}\" is undefined'.format(loopVar))
+
+
         elif(script.startswith('}',charNum)):
             openingTuple=execStack.pop()
             if(openingTuple[1]=='{'):
@@ -139,6 +123,7 @@ def evalScript(script,inObj):
  */
 
 import 'value_obj' from 'bif';
+import 'matchParens' from 'matchParens';
 
 export evalScript(script,inObj) {
     var ATHVars={}
@@ -154,7 +139,7 @@ export evalScript(script,inObj) {
     while(universe.living){
         var importTest = '/importf ([^; ]+) as ([^; ]+);/'
         if(script.startsWith('import ',charNum)){
-            var semicolonOffset = string.substring(charNum).indexOf(';');
+            var semicolonOffset = script.substring(charNum).indexOf(';');
             var importStatementStr = script.substring(charNum, charNum+semicolonOffset);
             var importStatementList = importStatementStr.split(' ');
             if(!ATHVars.includes(importStatementList[importStatementList.length - 1])){
@@ -163,7 +148,7 @@ export evalScript(script,inObj) {
             charNum += semicolonOffset;
 
         } elseif (script.substring(charNum).test(importTest)) {
-            matches = script.substring(charNum).matche(importTest);
+            matches = script.substring(charNum).match(importTest);
             var importfFilename = matches[1];
 
             try {
@@ -174,8 +159,21 @@ export evalScript(script,inObj) {
             catch (e) {
                 console.log("Error: could not read file " + importfFilename)
             }
-            charNum = string.substring(charNum).indexOf(';');
-        }
+            charNum = script.substring(charNum).indexOf(';');
+        } elseif (script.startswith('~ATH(', charNum)){
+            closeparenOffset = script.substring(charNum).indexOf(')');
+            var loopVar = script[charNum+5:charNum+closeparenOffset]
+            loopVar = loopVar.strip(' \t\n\r')
+            if (ATHVars.includes(loopVar)) :
+                if (ATHVars[loopVar].living) {
+                    execStack.append((charNum,'{'))
+                    charNum += closeparenOffset
+                } else{
+                    charNum = matchParens(script,charNum,'{','}')+2
+                }
+            }else{
+                console.log('warning/error: \"{0}\" is undefined'.format(loopVar))
+            }
     }
 
     return return_obj
