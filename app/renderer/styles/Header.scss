@@ -2,9 +2,11 @@
 
 header {
     padding-left: 20px;
-    border-bottom: solid 4px #333;
+    border-bottom: solid 4px $dark-grey;
+    background-color: $grey;
 }
 
 h1 {
+    color: $homestuck;
     font-size: 2em;
 }

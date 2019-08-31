@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import './../styles/Main.scss';
 
 import Header from './Header';
-import Editor from './Editor';
+import AthEditor from './AthEditor';
 import Sidebar from './Sidebar';
+import Terminal from './Terminal';
 
 export default class Main extends Component {
     render() {
@@ -12,8 +13,12 @@ export default class Main extends Component {
                 <Header />
                 <div className="sub-container">
                     <Sidebar />
-                    <Editor />
+                    <div className="deep-container">
+                        <AthEditor />
+                        <Terminal />
+                    </div>
                 </div>
+                
             </div>
         );
     }
