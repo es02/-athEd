@@ -1,15 +1,14 @@
-import value_obj from 'bif';
-import matchParens from 'matchParens';
-import getObjStr from 'getObjStr';
-import getStrObj from 'getStrObj';
-import textToNextSemiColon from 'textToNextSemiColon';
-import bifurcate from 'bifurcate';
+const value_obj = require('./bif.js').value_obj;
+var matchParens = require('./matchParens.js').matchParens;
+var getObjStr = require('./getObjStr.js').getObjStr;
+var getStrObj = require('./getStrObj.js').getStrObj;
+var bifurcate = require('./bifurcate.js').bifurcate;
 
-export evalScript(script, inObj) {
+function evalScript(script, inObj) {
     var ATHVars = {};
     var universe = new value_obj();
     var NULL_obj = new value_obj();
-    NULL_obj.DIE();
+    NULL_obj.die();
 
     ATHVars['universe'] = universe;
     ATHVars['NULL'] = NULL_obj;
@@ -53,13 +52,13 @@ export evalScript(script, inObj) {
     `;
 
     while (universe.living) {
-        const importTest = '/importf ([^; ]+) as ([^; ]+);/';
-        const print2Test = '/PRINT2 ([^\[\];]*);/';
-        const bif1Test = '/BIFURCATE ([^\[\];]*)\[([^\[\];]*),([^\[\];]*)\];/';
-        const bif2Test = '/BIFURCATE \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);/';
-        const dieTest = '/([0-9a-zA-Z]+)\.DIE\(([0-9a-zA-Z]*)\);/'
-        const catch1 = '/([A-Z0-9_]+) \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);/';
-        const catch2 = '/([A-Z0-9_]+) ([^\[\];]*)\[([^\[\];]*),([^\[\];]*)\];/';
+        const importTest = RegExp('importf ([^; ]+) as ([^; ]+);');
+        const print2Test = RegExp('PRINT2 ([^\[\];]*);');
+        const bif1Test = RegExp('BIFURCATE ([^\[\];]*)\[([^\[\];]*),([^\[\];]*)\];');
+        const bif2Test = RegExp('BIFURCATE \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);');
+        const dieTest = RegExp('([0-9a-zA-Z]+)\.DIE\(([0-9a-zA-Z]*)\);');
+        const catch1 = RegExp('([A-Z0-9_]+) \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);');
+        const catch2 = RegExp('([A-Z0-9_]+) ([^\[\];]*)\[([^\[\];]*),([^\[\];]*)\];');
 
         if (script.startsWith('import ', charNum)) {
             semicolonOffset = script.substring(charNum).indexOf(';');
@@ -69,8 +68,8 @@ export evalScript(script, inObj) {
                 ATHVars[importStatementList[importStatementList.length - 1]] = new value_obj();
             }
             charNum += semicolonOffset;
-        } elseif (script.substring(charNum).test(importTest)) {
-            matches = script.substring(charNum).match(importTest);
+        } else if (importTest.test(script.substring(charNum))) {
+            matches = importTest.match(script.substring(charNum));
             var importfFilename = matches[1];
 
             try {
@@ -82,7 +81,7 @@ export evalScript(script, inObj) {
                 console.log("Error: could not read file " + importfFilename)
             }
             charNum = script.substring(charNum).indexOf(';');
-        } elseif (script.startsWith('~ATH(', charNum)){
+        } else if (script.startsWith('~ATH(', charNum)){
             closeparenOffset = script.substring(charNum).indexOf(')');
             var loopVar = script.substring(charNum + 5, charNum + closeparenOffset);
             loopVar = loopVar.strip(' \t\n\r');
@@ -96,40 +95,40 @@ export evalScript(script, inObj) {
             } else {
                 console.log('warning/error is undefined: ' + loopVar);
             }
-        } elseif (script.startsWith('}', charNum)){
+        } else if (script.startsWith('}', charNum)){
             var openingTuple = execStack.pop();
             if(openingTuple[1] == '{') {
                 charNum = openingTuple[0];
             } else {
                 console.log('Syntax error');
             }
-        } elseif (script.startsWith('print ', charNum)) {
+        } else if (script.startsWith('print ', charNum)) {
             semicolonOffset = script.substring(charNum).indexOf(';')
             console.log(script.substring(charNum + 6, charNum + semicolonOffset));
             charNum += semicolonOffset // +6
-        } elseif (script.substring(charNum).test(print2Test)) {
+        } else if (script.substring(charNum).test(print2Test)) {
             matches = script.substring(charNum).match(print2Test)
             console.log(getObjStr(ATHVars[matches[1]]))
             charNum = script.substring(charNum).indexOf(';');
-        } elseif (script.startsWith('INPUT', charNum)) {
+        } else if (script.startsWith('INPUT', charNum)) {
             semicolonOffset = script.substring(charNum).indexOf(';')
             var varname = script.substring(charNum + 6, charNum + semicolonOffset);
             ATHVars[varname] = getStrObj(input(':'));
             charNum += semicolonOffset
-        } elseif (script.substring(charNum).test(bif1Test)) {
+        } else if (script.substring(charNum).test(bif1Test)) {
             matches = script.substring(charNum).match(bif1Test);
             var foo = bifurcate(ATHVars[matches[1]]);
             ATHVars[matches[2]] = foo.parts.leftObj;
             ATHVars[matches[3]] = foo.parts.rightObj;
             charNum = script.substring(charNum).indexOf(';');
-        } elseif (script.substring(charNum).test(bif2Test)) {
+        } else if (script.substring(charNum).test(bif2Test)) {
             matches = script.substring(charNum).match(bif2Test);
             ATHVars[matches[3]] = bifurcate(
                 ATHVars[matches[1]],
                 ATHVars[matches[2]]
             )
             charNum = script.substring(charNum).indexOf(';');
-        } elseif (script.startsWith('BIFURCATE ', charNum)) {
+        } else if (script.startsWith('BIFURCATE ', charNum)) {
             charNum += 10;
             var semicolonOffset = script.substring(charNum).indexOf(';');
             var openSquareOffset = script.substring(charNum).indexOf('[');
@@ -181,24 +180,24 @@ export evalScript(script, inObj) {
                     ATHVars[rightHalf] = foo.parts.rightObj;
                 }
             }
-        } elseif (script.substring(charNum).test(dieTest)) {
+        } else if (script.substring(charNum).test(dieTest)) {
             matches = script.substring(charNum).match(dieTest);
             var varname = matches[1]
             var argvarname = matches[2]
-            if argvarname {
+            if (argvarname) {
                 return_obj = ATHVars[argvarname]
             }
-            ATHVars[varname].DIE()
+            ATHVars[varname].die()
             charNum = script.substring(charNum).indexOf(';');
-        } elseif (script.startsWith('//',charNum)) {
+        } else if (script.startsWith('//',charNum)) {
             nextNewlinePos = script.substring(charNum).indexOf('\n')
             if (script.substring(charNum, nextNewlinePos).includes('\r')) {
                 nextNewlinePos = script.substring(charNum).indexOf('\r')
             }
             charNum = nextNewlinePos;
-        } elseif (script.startsWith('/*',charNum)) {
+        } else if (script.startsWith('/*',charNum)) {
             charNum = script.substring(charNum).indexOf('*/');
-        } elseif (script.substring(charNum).test(catch1)) {
+        } else if (script.substring(charNum).test(catch1)) {
             try {
                 matches = script.substring(charNum).match(catch1);
                 funName = matches[1];
@@ -219,7 +218,7 @@ export evalScript(script, inObj) {
                 console.log("...");
                 charNum++;
             }
-        } elseif (script.substring(charNum).test(catch2)) {
+        } else if (script.substring(charNum).test(catch2)) {
             try {
                 matches = script.substring(charNum).match(catch2);
                 var funName = matches[1];
@@ -246,9 +245,13 @@ export evalScript(script, inObj) {
         } else {
              charNum++;
              if (charNum > script.length) {
-                 universe.DIE();
+                 universe.die();
              }
         }
     }
     return return_obj;
+}
+
+module.exports = {
+  evalScript: evalScript,
 }

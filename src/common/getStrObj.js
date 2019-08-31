@@ -5,18 +5,22 @@ def getStrObj(theStr):
     else:
         return bifurcate(getCharObj(theStr[0]),getStrObj(theStr[1:]))
 */
-import getCharObj from 'getCharObj';
-import bifurcate from 'bifurcate';
+var getCharObj = require('./getCharObj.js').getCharObj;
+var bifurcate = require('./bifurcate.js').bifurcate;
 
 /**
  * [getStrObj description]
  * @param {} theStr [description]
  * @return {} [description]
  */
-export function getStrObj(theStr) {
+function getStrObj(theStr) {
   if (theStr.length === 0) {
     return null;
   } else {
     return bifurcate(getCharObj(theStr.charAt(0)), getStrObj(theStr.substring(1)));
   }
+}
+
+module.exports = {
+  getStrObj: getStrObj,
 }

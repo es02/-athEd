@@ -39,7 +39,7 @@ var value_obj = class {
  * @param  {value_obj} value [description]
  * @return {value_obj}       [description]
  */
-export function bifurcate(value) {
+function bifurcate(value) {
     if (!value.hasOwnProperty('parts') || value.parts.length === 0) {
         let leftHalf = new value_obj(value);
         leftHalf.formsLeftOf.push(value);
@@ -58,7 +58,7 @@ export function bifurcate(value) {
  * @param  {[type]} valueB [description]
  * @return {[type]}        [description]
  */
-export function unbifurcate(valueA, valueB) {
+function unbifurcate(valueA, valueB) {
     var value = valueA.formsLeftOf.forEach(function(value) {
       if (valueB.formsRight.includes(value)) {
           return value;
@@ -73,4 +73,10 @@ export function unbifurcate(valueA, valueB) {
     } else {
         return combined;
     }
+}
+
+module.exports = {
+  bifurcate: bifurcate,
+  unbifurcate: unbifurcate,
+  value_obj: value_obj,
 }

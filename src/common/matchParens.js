@@ -27,7 +27,7 @@ def matchParens(text,start,openStr,closeStr):
  * @param {} closeStr [description]
  * @return {} [description]
  */
-export function matchParens (text, start, openStr, closeStr) {
+function matchParens (text, start, openStr, closeStr) {
   var count = 0;
   var charNum = start;
   var firstChar = true;
@@ -48,4 +48,8 @@ export function matchParens (text, start, openStr, closeStr) {
     charNum += 1;
   }
   return charNum - 1;
+}
+
+module.exports = {
+  matchParens: matchParens,
 }

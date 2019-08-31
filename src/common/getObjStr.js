@@ -12,7 +12,7 @@ def getObjStr(theObj):
     return outStr
 */
 
-import bifurcate from 'bifurcate';
+var bifurcate = require('./bifurcate.js').bifurcate;
 
 /**
  * [getObjStr description]
@@ -20,7 +20,7 @@ import bifurcate from 'bifurcate';
  * @param {} charObjs [description]
  * @return {} [description]
  */
-export function getObjStr(theObj, charObjs) {
+function getObjStr(theObj, charObjs) {
   var outStr = '';
   var newObj = bifurcate(theObj);
   while (theObj.living) {
@@ -34,4 +34,8 @@ export function getObjStr(theObj, charObjs) {
     theObj = newObj.parts.rightObj;
   }
   return outStr;
+}
+
+module.exports = {
+  getObjStr: getObjStr,
 }

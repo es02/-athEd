@@ -10,7 +10,11 @@ def textToNextSemicolon(text,start=0):
  * @param {} start [description]
  * @return {} [description]
  */
-export function textToNextSemicolon (text, start = 0) {
+function textToNextSemicolon (text, start = 0) {
   var semicolonOffset = text.substring(0, start).indexOf(';');
   return text.substring(start, semicolonOffset);
+}
+
+module.exports = {
+  textToNextSemicolon: textToNextSemicolon,
 }
