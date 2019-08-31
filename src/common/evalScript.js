@@ -4,7 +4,7 @@ var getObjStr = require('./getObjStr.js').getObjStr;
 var getStrObj = require('./getStrObj.js').getStrObj;
 var bifurcate = require('./bifurcate.js').bifurcate;
 
-function evalScript(script, inObj) {
+async function evalScript(script, inObj) {
     var ATHVars = {};
     var universe = new value_obj();
     var NULL_obj = new value_obj();
@@ -54,11 +54,11 @@ function evalScript(script, inObj) {
     while (universe.living) {
         const importTest = RegExp('importf ([^; ]+) as ([^; ]+);');
         const print2Test = RegExp('PRINT2 ([^\[\];]*);');
-        const bif1Test = RegExp('BIFURCATE ([^\[\];]*)\[([^\[\];]*),([^\[\];]*)\];');
-        const bif2Test = RegExp('BIFURCATE \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);');
+        const bif1Test = /BIFURCATE ([^\[\];]*)\[([^\[\];]*),([^\[\];]*)\];/;
+        const bif2Test = /BIFURCATE \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);/;
         const dieTest = RegExp('([0-9a-zA-Z]+)\.DIE\(([0-9a-zA-Z]*)\);');
-        const catch1 = RegExp('([A-Z0-9_]+) \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);');
-        const catch2 = RegExp('([A-Z0-9_]+) ([^\[\];]*)\[([^\[\];]*),([^\[\];]*)\];');
+        const catch1 = /([A-Z0-9_]+) \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);/;
+        const catch2 = /([A-Z0-9_]+) ([^\[\];]*)\[([^\[\];]*),([^\[\];]*)\];/;
 
         if (script.startsWith('import ', charNum)) {
             semicolonOffset = script.substring(charNum).indexOf(';');
@@ -69,7 +69,7 @@ function evalScript(script, inObj) {
             }
             charNum += semicolonOffset;
         } else if (importTest.test(script.substring(charNum))) {
-            matches = importTest.match(script.substring(charNum));
+            matches = script.substring(charNum).match(importTest);
             var importfFilename = matches[1];
 
             try {
@@ -105,23 +105,33 @@ function evalScript(script, inObj) {
         } else if (script.startsWith('print ', charNum)) {
             semicolonOffset = script.substring(charNum).indexOf(';')
             console.log(script.substring(charNum + 6, charNum + semicolonOffset));
-            charNum += semicolonOffset // +6
-        } else if (script.substring(charNum).test(print2Test)) {
-            matches = script.substring(charNum).match(print2Test)
+            charNum += semicolonOffset + 2; // +6
+        } else if (print2Test.test(script.substring(charNum))) {
+            matches = script.substring(charNum).match(print2Test);
             console.log(getObjStr(ATHVars[matches[1]]))
             charNum = script.substring(charNum).indexOf(';');
         } else if (script.startsWith('INPUT', charNum)) {
             semicolonOffset = script.substring(charNum).indexOf(';')
             var varname = script.substring(charNum + 6, charNum + semicolonOffset);
-            ATHVars[varname] = getStrObj(input(':'));
-            charNum += semicolonOffset
-        } else if (script.substring(charNum).test(bif1Test)) {
+            const readline = require('readline').createInterface({
+              input: process.stdin,
+              output: process.stdout
+            })
+
+            var input = await readline.question(`:`, name => {
+              readline.close();
+              return name;
+          }).then(){
+                ATHVars[varname] = getStrObj(input);
+                charNum += semicolonOffset
+            }
+        } else if (bif1Test.test(script.substring(charNum))) {
             matches = script.substring(charNum).match(bif1Test);
             var foo = bifurcate(ATHVars[matches[1]]);
             ATHVars[matches[2]] = foo.parts.leftObj;
             ATHVars[matches[3]] = foo.parts.rightObj;
             charNum = script.substring(charNum).indexOf(';');
-        } else if (script.substring(charNum).test(bif2Test)) {
+        } else if (bif2Test.test(script.substring(charNum))) {
             matches = script.substring(charNum).match(bif2Test);
             ATHVars[matches[3]] = bifurcate(
                 ATHVars[matches[1]],
@@ -180,7 +190,7 @@ function evalScript(script, inObj) {
                     ATHVars[rightHalf] = foo.parts.rightObj;
                 }
             }
-        } else if (script.substring(charNum).test(dieTest)) {
+        } else if (dieTest.test(script.substring(charNum))) {
             matches = script.substring(charNum).match(dieTest);
             var varname = matches[1]
             var argvarname = matches[2]
@@ -218,7 +228,7 @@ function evalScript(script, inObj) {
                 console.log("...");
                 charNum++;
             }
-        } else if (script.substring(charNum).test(catch2)) {
+        } else if (catch2.test(script.substring(charNum))) {
             try {
                 matches = script.substring(charNum).match(catch2);
                 var funName = matches[1];
