@@ -40,11 +40,6 @@ def getCharObj(theChar):
         theCharObj=bif.value_obj()
         charObjs[theChar]=theCharObj
         return theCharObj
-def getStrObj(theStr):
-    if(len(theStr)==0):
-        return NULL_obj
-    else:
-        return bifurcate(getCharObj(theStr[0]),getStrObj(theStr[1:]))
 
 def getObjStr(theObj):
     outStr=""
