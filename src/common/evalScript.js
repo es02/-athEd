@@ -4,38 +4,6 @@ def evalScript(script,inObj):
 
         (...)
 
-        elif(re.match(r'BIFURCATE ([^\[\];]*)\[([^\[\];]*),([^\[\];]*)\];',script[charNum:])!=None):
-            #print("binurcate the thing!")
-            matches=re.match(r'BIFURCATE ([^\[\];]*)\[([^\[\];]*),([^\[\];]*)\];',script[charNum:])
-            (ATHVars[matches.group(2)],ATHVars[matches.group(3)])=bifurcate(ATHVars[matches.group(1)])
-            charNum=script.find(';',charNum)
-        elif(re.match(r'BIFURCATE \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);',script[charNum:])!=None):
-            matches=re.match(r'BIFURCATE \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);',script[charNum:])
-            ATHVars[matches.group(3)]=bifurcate(ATHVars[matches.group(1)],ATHVars[matches.group(2)])
-            charNum=script.find(';',charNum)
-        elif(script.startswith('BIFFURCATE ',charNum)):
-            charNum+=10
-            semicolonOffset=script[charNum:].index(';')
-            openSquareOffset=script[charNum:].index('[')
-            closeSquareOffset=script[charNum:].index(']')
-            commaOffset=script[charNum:].index(',')
-            syntacticallyCorrect=True
-            for offset in [openSquareOffset,closeSquareOffset,commaOffset]:
-                if((offset==-1) or (offset>semicolonOffset)):
-                    print("Bifurcate command malformed, char:"+str(charNum))
-                    syntacticallyCorrect=False
-                    break
-            if(syntacticallyCorrect):
-                if(openSquareOffset==0):
-                    leftHalf=script[charNum+openSquareOffset+1:charNum+commaOffset]
-                    rightHalf=script[charNum+commaOffset+1:charNum+closeSquareOffset]
-                    combinedName=script[charNum+closeSquareOffset+1:charNum+semicolonOffset]
-                    ATHVars[combinedName]=bifurcate(ATHVars[leftHalf],ATHVars[rightHalf])
-                else:
-                    toSplitName=script[charNum:charNum+openSquareOffset]
-                    leftHalf=script[charNum+openSquareOffset+1:charNum+commaOffset]
-                    rightHalf=script[charNum+commaOffset+1:charNum+closeSquareOffset]
-                    (ATHVars[leftHalf],ATHVars[rightHalf])=bifurcate(ATHVars[toSplitName])
         elif(re.match(r'([0-9a-zA-Z]+)\.DIE\(([0-9a-zA-Z]*)\);',script[charNum:])!=None):#script[charNum:script[charNum:].find(';')].endswith('.DIE()')):
             matches=re.match(r'([0-9a-zA-Z]+)\.DIE\(([0-9a-zA-Z]*)\);',script[charNum:])#.group(1)
             varname=matches.group(1)
@@ -104,10 +72,13 @@ def evalScript(script,inObj):
 
 import value_obj from 'bif';
 import matchParens from 'matchParens';
+import getObjStr from 'getObjStr';
+import getStrObj from 'getStrObj';
+import textToNextSemiColon from 'textToNextSemiColon';
 
-export evalScript(script,inObj) {
+export evalScript(script, inObj) {
     var ATHVars = {};
-    var universe = bif.value_obj();
+    var universe = new value_obj();
     ATHVars['universe'] = universe;
     ATHVars['NULL'] = NULL_obj;
     ATHVars['ARGS'] = inObj;
@@ -121,10 +92,12 @@ export evalScript(script,inObj) {
     while (universe.living) {
         const importTest = '/importf ([^; ]+) as ([^; ]+);/';
         const print2Test = '/PRINT2 ([^\[\];]*);/';
+        const bif1Test = '/BIFURCATE ([^\[\];]*)\[([^\[\];]*),([^\[\];]*)\];/';
+        const bif2Test = '/BIFURCATE \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);/';
 
         if (script.startsWith('import ', charNum)) {
             semicolonOffset = script.substring(charNum).indexOf(';');
-            var importStatementStr = script.substring(charNum, charNum+semicolonOffset);
+            var importStatementStr = script.substring(charNum, charNum + semicolonOffset);
             var importStatementList = importStatementStr.split(' ');
             if(!ATHVars.includes(importStatementList[importStatementList.length - 1])){
                 ATHVars[importStatementList[importStatementList.length - 1]] = new value_obj();
@@ -175,8 +148,73 @@ export evalScript(script,inObj) {
         } elseif (script.startsWith('INPUT', charNum)) {
             semicolonOffset = script.substring(charNum).indexOf(';')
             var varname = script.substring(charNum + 6, charNum + semicolonOffset);
-            ATHVars[varname] = getStrObj(raw_input(':'));
-            charNum+=semicolonOffset
+            ATHVars[varname] = getStrObj(input(':'));
+            charNum += semicolonOffset
+        } elseif (script.substring(charNum).test(bif1Test)) {
+            matches = script.substring(charNum).match(bif1Test);
+            var foo = bifurcate(ATHVars[matches[1]]);
+            ATHVars[matches[2]] = foo.parts.leftObj;
+            ATHVars[matches[3]] = foo.parts.rightObj;
+            charNum = script.substring(charNum).indexOf(';');
+        } elseif (script.substring(charNum).test(bif2Test)) {
+            matches = script.substring(charNum).match(bif2Test);
+            ATHVars[matches[3]] = bifurcate(
+                ATHVars[matches[1]],
+                ATHVars[matches[2]]
+            )
+            charNum = script.substring(charNum).indexOf(';');
+        } elseif (script.startsWith('BIFURCATE ', charNum)) {
+            charNum += 10;
+            var semicolonOffset = script.substring(charNum).indexOf(';');
+            var openSquareOffset = script.substring(charNum).indexOf('[');
+            var closeSquareOffset = script.substring(charNum).indexOf(']');
+            var commaOffset = script.substring(charNum).indexOf(',');
+            var syntacticallyCorrect = true;
+
+            const offsets = [openSquareOffset, closeSquareOffset, commaOffset]
+            for (var offset in offsets) {
+                if (( offset == -1) || (offset > semicolonOffset)) {
+                    console.log("Bifurcate command malformed, char: " + charNum);
+                    syntacticallyCorrect = false;
+                    break;
+                }
+            }
+            if (syntacticallyCorrect) {
+                if (openSquareOffset == 0) {
+                    var leftHalf = script.substring(
+                        charNum + openSquareOffset + 1,
+                        charNum + commaOffset
+                    );
+                    var rightHalf = script.substring(
+                        charNum + commaOffset + 1,
+                        charNum + closeSquareOffset
+                    );
+                    var combinedName = script.substring(
+                        charNum + closeSquareOffset + 1,
+                        charNum + semicolonOffset
+                    );
+                    ATHVars[combinedName] = bifurcate(
+                        ATHVars[leftHalf],
+                        ATHVars[rightHalf]
+                    );
+                } else {
+                    var toSplitName = script.substring(
+                        charNum,
+                        charNum + openSquareOffset
+                    );
+                    var leftHalf = script.substring(
+                        charNum + openSquareOffset + 1,
+                        charNum + commaOffset
+                    );
+                    var rightHalf = script.substring(
+                        charNum + commaOffset + 1,
+                        charNum + closeSquareOffset
+                    );
+                    var foo = bifurcate(ATHVars[toSplitName]);
+                    ATHVars[leftHalf] = foo.parts.leftObj;
+                    ATHVars[rightHalf] = foo.parts.rightObj;
+                }
+            }
         }
     }
 
