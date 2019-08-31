@@ -1,7 +1,7 @@
 BIFURCATE [NULL,NULL]2NULL;
 print input some text;
 INPUT B;
-print input some text;
+print input some more text;
 INPUT C;
 import TEST EQT;
 BIFURCATE B[B1,B2];
@@ -10,7 +10,7 @@ BIFURCATE [B1,EQT]TB;
 BIFURCATE [C1,EQT]TC;
 TB.DIE();
 import ANS REQ;
-// comments are broken
+// comments are broken af
 /*
 This check is in-fact broken
 And always returns false

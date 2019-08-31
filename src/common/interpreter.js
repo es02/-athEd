@@ -159,11 +159,11 @@ function evalScript(script, inObj) {
             if (ATHlets.hasOwnProperty(looplet)) {
 
                 // console.log(ATHlets)
-                // console.log(looplet)
+                //  console.log("loop: " + looplet)
                 if (ATHlets[looplet].living) {
                     execStack.push([charNum, '{']);
-                    // console.log("pushed to execstack")
-                    // console.log(execStack)
+                     // console.log("pushed to execstack")
+                     // console.log(execStack)
                     charNum += closeparenOffset;
                 } else{
                     charNum = matchParens(script,charNum,'{','}') + 2;
@@ -172,9 +172,9 @@ function evalScript(script, inObj) {
                 console.log('warning/error is undefined: ' + looplet);
             }
         } else if (script.startsWith('}', charNum)){
-            //console.log(execStack)
+            // console.log(execStack)
             let openingTuple = execStack.pop();
-            //console.log("tuple: " + openingTuple)
+            // console.log("tuple: " + openingTuple)
             if (openingTuple[1] == '{') {
                 charNum = openingTuple[0];
             } else {
@@ -276,15 +276,16 @@ function evalScript(script, inObj) {
                 return_obj = ATHlets[argletname];
             }
             ATHlets[letname].die();
-            charNum = script.substring(charNum).indexOf(';') + 2;
+            charNum += script.substring(charNum).indexOf(';') + 2;
         } else if (script.startsWith('//', charNum)) {
+            // console.log(script.substring(charNum));
             let nextNewlinePos = script.substring(charNum).indexOf("\n");
-            if (script.substring(charNum, nextNewlinePos).includes("\r")) {
+            if (script.substring(nextNewlinePos).includes("\r")) {
                 nextNewlinePos = script.substring(charNum).indexOf("\r");
             }
-            charNum = nextNewlinePos;
+            charNum += nextNewlinePos + 1;
         } else if (script.startsWith('/*',charNum)) {
-            charNum = script.substring(charNum).indexOf('*/') + 2;
+            charNum += script.substring(charNum).indexOf('*/') + 1;
         } else if (catch1.test(script.substring(charNum))) {
             try {
                 let matches = script.substring(charNum).match(catch1);
