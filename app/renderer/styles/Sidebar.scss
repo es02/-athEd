@@ -1,6 +1,15 @@
 @import 'colors';
 
 .sidebar {
-  width: 200px;
+  width: 350px;
   border: 2px solid #333;
+  background-color: $dark-blue;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
+
+a{
+  width:100%;
+  color: rgb(230, 222, 222);
+}
+
