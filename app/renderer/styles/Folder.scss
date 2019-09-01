@@ -1,5 +1,25 @@
 @import './colors';
 
 .folder-div{
-    background-color: tan;
+    background-color: $dark-blue;
+    padding-left:20px;
+    width: 100%;
+    color: rgb(230, 222, 222);
+}
+
+.subfolder-div{
+    background: $dark-blue;
+    width: 100%;
+}
+
+.show{
+    display: block;
+}
+
+.hide{
+ display: none;
+}
+a{
+    width:100%;
+    color: rgb(230, 222, 222);
 }
