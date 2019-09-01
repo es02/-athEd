@@ -3,12 +3,12 @@
     It interprets things written in drocta ~ATH
     Really, I thought the name was fairly self explanatory.
     This file handles Bifurcation, reverse Bifurcation, and .DIE()
-    It creates the function for modifying values. (not the variables, the values)
+    It creates the function for modifying values. (not the letiables, the values)
  */
 
-var allValueObjs=[];
+let allValueObjs=[];
 
-var value_obj = class {
+let value_obj = class {
     constructor(parts=[]){
         this.parts = parts;
         this.formsLeftOf = [];
@@ -21,56 +21,67 @@ var value_obj = class {
             let leftHalf = new value_obj(this);
             leftHalf.formsLeftOf.push(this);
             leftHalf.whichHalve = [1,0];
-            rightHalf = new value_obj(this);
+            let rightHalf = new value_obj(this);
             rightHalf.formsRightOf.push(this);
             rightHalf.whichHalve = [0,1];
-            this.parts = (leftHalf,rightHalf);
+            this.parts = {'leftHalf': leftHalf, 'rightHalf': rightHalf};
         }
 
-        return this.parts;
+        return {
+            'leftHalf': this.parts.leftHalf,
+            'rightHalf': this.parts.rightHalf
+        };
     }
     die() {
         this.living=false;
     }
-}
+};
 
 /**
  * [bifurcate description]
  * @param  {value_obj} value [description]
  * @return {value_obj}       [description]
  */
-export function bifurcate(value) {
+function bifurcate(value) {
+    // console.log("biffirc val: " + value);
     if (!value.hasOwnProperty('parts') || value.parts.length === 0) {
         let leftHalf = new value_obj(value);
         leftHalf.formsLeftOf.push(value);
         leftHalf.whichHalve = [1,0];
-        rightHalf = new value_obj(value);
+        let rightHalf = new value_obj(value);
         rightHalf.formsRightOf.push(value);
         rightHalf.whichHalve = [0,1];
-        value.parts = (leftHalf,rightHalf);
+        value.parts = {'leftHalf': leftHalf, 'rightHalf': rightHalf};
     }
-    return self.parts;
-}
+    return {
+        'leftHalf': value.parts.leftHalf,
+        'rightHalf': value.parts.rightHalf
+    };
+};
 
 /**
  * [unbifurcate description]
- * @param  {[type]} valueA [description]
- * @param  {[type]} valueB [description]
+ * @param  {value_obj} valueA [description]
+ * @param  {value_obj} valueB [description]
  * @return {[type]}        [description]
  */
-export function unbifurcate(valueA, valueB) {
-    var value = valueA.formsLeftOf.forEach(function(value) {
-      if (valueB.formsRight.includes(value)) {
-          return value;
-      }
-    })
-    var combined = new value_obj(valueA, valueB);
-    valueA.formsLeftOf.push(combined);
-    valueB.formsRightOf.push(combined);
+function unbifurcate(valueA, valueB) {
+    valueA.formsLeftOf.forEach(function(value) {
+        // If this is a bifurcated pair just return the original pair
+        if (
+            typeof value !== 'undefined' &&
+            typeof valueB.formsRightOf !== 'undefined' &&
+            valueB.formsRightOf.includes(value)
+        ) {
+            return value;
+        }
+    });
+    let parts = {'leftHalf': valueA, 'rightHalf': valueB};
+    return new value_obj(parts);
+}
 
-    if (value) {
-        return value;
-    } else {
-        return combined;
-    }
+module.exports = {
+  bifurcate: bifurcate,
+  unbifurcate: unbifurcate,
+  value_obj: value_obj,
 }

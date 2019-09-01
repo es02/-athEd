@@ -1,5 +1,4 @@
 /*
-"""
 python drocta ~ATH interpreter
 It interprets things written in drocta ~ATH
 and is written in python.
@@ -8,236 +7,341 @@ Build number:10
 (note:build number might not be accurate, sometimes I forget to increment it.
 But I dont decrement it so its still maybe somewhat useful.
 or you could just check the github versions. w/e.)
-"""
-
-import bif
-import re
-import pdb
-import matchParens
-
-def bifurcate(valueA,valueB=False):
-    if(valueB):
-        return bif.unbifurcate(valueA, valueB)
-    else:
-        return bif.bifurcate(valueA)
-
-/*
-charObjs={}
-def getCharObj(theChar):
-    if(theChar in charObjs):
-        return charObjs[theChar]
-    else:
-        theCharObj=bif.value_obj()
-        charObjs[theChar]=theCharObj
-        return theCharObj
-
-funCodes={}
-funCodes['HELLO']="""
-print "Hello World.";"
-THIS.DIE(THIS);"""
-funCodes["ADD"]="""
-import bluh BLAH;
-BIFURCATE ARGS[A,B];
-BIFURCATE [BLAH,A]ATEMP;
-BIFURCATE [BLAH,B]BTEMP;
-BIFURCATE ATEMP[JUNK,ATEMP];
-BIFURCATE BTEMP[JUNK,BTEMP];
-BIFURCATE [BLAH,NULL]C;
-BIFURCATE C[JUNK,C];
-~ATH(ATEMP){
-BIFURCATE ATEMP[JUNK,ATEMP];
-BIFURCATE [BLAH,C]C;
-}
-~ATH(BTEMP){
-BIFURCATE BTEMP[JUNK,BTEMP];
-BIFURCATE [BLAH,C]C;
-}
-/*
-BIFURCATE [BLAH,C]CTEMP;
-BIFURCATE CTEMP[JUNK,CTEMP];
-~ATH(CTEMP){
-BIFURCATE CTEMP[JUNK,CTEMP];
-print some text;
-}
-print DONE!;
-
-THIS.DIE(C);
-"""#NOTE:use a better addition algorithm.
-
-NULL_obj=bif.value_obj()
-NULL_obj.DIE()
-def evalScript(script,inObj):
-    ATHVars={}
-    THIS=bif.value_obj()
-    ATHVars['THIS']=THIS
-    ATHVars['NULL']=NULL_obj
-    ATHVars['ARGS']=inObj
-    return_obj=NULL_obj
-
-    charNum=0
-    execStack=[]
-
-    while(THIS.living):
-        if(False):
-            pass
-        elif(script.startswith('import ',charNum)):
-            semicolonOffset=script[charNum:].index(';')
-            importStatementStr=script[charNum:charNum+semicolonOffset]
-            importStatementList=importStatementStr.split(' ')
-            if(importStatementList[-1] not in ATHVars):
-                ATHVars[importStatementList[-1]]=bif.value_obj()
-            charNum+=semicolonOffset
-        elif(re.match(r'importf ([^; ]+) as ([^; ]+);',script[charNum:])!=None):
-            matches=re.match(r'importf ([^; ]+) as ([^; ]+);',script[charNum:])
-            importfFilename=matches.group(1)
-            #print "the filename is "+importfFilename
-            try:
-                importfFilelink=open(importfFilename,'r')
-                newFunc=importfFilelink.read(-1)
-                #print newFunc
-                funCodes[matches.group(2)]=newFunc
-            except:
-                print "could not read file "+importfFilename
-            charNum=script.find(';',charNum)
-        elif(script.startswith('~ATH(',charNum)):
-            closeparenOffset=script[charNum:].index(')')
-            loopVar=script[charNum+5:charNum+closeparenOffset]
-            loopVar=loopVar.strip(' \t\n\r')
-            #print "reached ~ATH command, loopVar is "+loopVar
-            if(loopVar in ATHVars):
-                if(ATHVars[loopVar].living):
-                    execStack.append((charNum,'{'))
-                    charNum+=closeparenOffset
-                    #print "loop on "+loopVar
-                else:
-                    #print "parenmatch jump from "+str(charNum)
-                    charNum=matchParens(script,charNum,'{','}')+2
-                    #print "parenmatch jumped to char:"+str(charNum)+" which was"+script[charNum]
-                    #print "loopVar was "+loopVar
-            else:
-                print('warning/error: \"{0}\" is undefined'.format(loopVar))
-        elif(script.startswith('}',charNum)):
-            openingTuple=execStack.pop()
-            if(openingTuple[1]=='{'):
-                charNum=openingTuple[0]
-            else:
-                print('what are you trying to do? \"(...}\" error')
-        elif(script.startswith('print ',charNum)):
-            #print "print..."
-            semicolonOffset=script[charNum:].index(';')
-            print(script[charNum+6:charNum+semicolonOffset])
-            charNum+=semicolonOffset#+6
-        elif(re.match(r'PRINT2 ([^\[\];]*);',script[charNum:])!=None):
-            matches=re.match(r'PRINT2 ([^\[\];]*);',script[charNum:])
-            print getObjStr(ATHVars[matches.group(1)])
-            charNum=script.find(';',charNum)
-        elif(script.startswith('INPUT',charNum)):
-            semicolonOffset=script[charNum:].index(';')
-            varname=script[charNum+6:charNum+semicolonOffset]
-            #print 'INPUT varname was "'+varname+'"'
-            ATHVars[varname]=getStrObj(raw_input(':'))
-            charNum+=semicolonOffset
-        elif(re.match(r'BIFURCATE ([^\[\];]*)\[([^\[\];]*),([^\[\];]*)\];',script[charNum:])!=None):
-            #print("binurcate the thing!")
-            matches=re.match(r'BIFURCATE ([^\[\];]*)\[([^\[\];]*),([^\[\];]*)\];',script[charNum:])
-            (ATHVars[matches.group(2)],ATHVars[matches.group(3)])=bifurcate(ATHVars[matches.group(1)])
-            charNum=script.find(';',charNum)
-        elif(re.match(r'BIFURCATE \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);',script[charNum:])!=None):
-            matches=re.match(r'BIFURCATE \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);',script[charNum:])
-            ATHVars[matches.group(3)]=bifurcate(ATHVars[matches.group(1)],ATHVars[matches.group(2)])
-            charNum=script.find(';',charNum)
-        elif(script.startswith('BIFFURCATE ',charNum)):
-            charNum+=10
-            semicolonOffset=script[charNum:].index(';')
-            openSquareOffset=script[charNum:].index('[')
-            closeSquareOffset=script[charNum:].index(']')
-            commaOffset=script[charNum:].index(',')
-            syntacticallyCorrect=True
-            for offset in [openSquareOffset,closeSquareOffset,commaOffset]:
-                if((offset==-1) or (offset>semicolonOffset)):
-                    print("Bifurcate command malformed, char:"+str(charNum))
-                    syntacticallyCorrect=False
-                    break
-            if(syntacticallyCorrect):
-                if(openSquareOffset==0):
-                    leftHalf=script[charNum+openSquareOffset+1:charNum+commaOffset]
-                    rightHalf=script[charNum+commaOffset+1:charNum+closeSquareOffset]
-                    combinedName=script[charNum+closeSquareOffset+1:charNum+semicolonOffset]
-                    ATHVars[combinedName]=bifurcate(ATHVars[leftHalf],ATHVars[rightHalf])
-                else:
-                    toSplitName=script[charNum:charNum+openSquareOffset]
-                    leftHalf=script[charNum+openSquareOffset+1:charNum+commaOffset]
-                    rightHalf=script[charNum+commaOffset+1:charNum+closeSquareOffset]
-                    (ATHVars[leftHalf],ATHVars[rightHalf])=bifurcate(ATHVars[toSplitName])
-        elif(re.match(r'([0-9a-zA-Z]+)\.DIE\(([0-9a-zA-Z]*)\);',script[charNum:])!=None):#script[charNum:script[charNum:].find(';')].endswith('.DIE()')):
-            matches=re.match(r'([0-9a-zA-Z]+)\.DIE\(([0-9a-zA-Z]*)\);',script[charNum:])#.group(1)
-            varname=matches.group(1)
-            argvarname=matches.group(2)
-            if argvarname:
-                #print("argvarname is " +argvarname)
-                return_obj=ATHVars[argvarname]
-            #print "found .DIE(); statement! Variable name is "+varname
-            ATHVars[varname].DIE()
-            charNum=script.find(';',charNum)
-            #print varname+"killed"
-        elif(script.startswith('//',charNum)):
-            nextNewlinePos=script.find('\n',charNum)
-            if '\r' in script[charNum:nextNewlinePos]:
-                nextNewlinePos=script.find('\r',charNum)
-            charNum=nextNewlinePos
-        elif(script.startswith('/*',charNum)):
 */
-//            charNum=script.find('*/',charNum)
-/*
-        elif(script.startswith('PYDEBUG',charNum)):
-            pdb.set_trace()
-            charNum+=5
-        elif(re.match(r'([A-Z0-9_]+) \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);',script[charNum:])!=None):
-            try:
-                matches=re.match(r'([A-Z0-9_]+) \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);',script[charNum:])
-                funName=matches.group(1)
-                #print "the function called '"+funName + "' was called."
-                #print "yeah it works."
-                if funName in funCodes:
-                    theFuncCode=funCodes[funName]
-                    sentInObject=bifurcate(ATHVars[matches.group(2)],ATHVars[matches.group(3)])
-                    ATHVars[matches.group(4)]=evalScript(theFuncCode,sentInObject)
-                else:
-                    print "error: function called '"+funName+"' not recognized"
-                charNum+=len(funName)
-            except:
-                print "function not recognized/ a bug in the interpreter"
-                print matches#re.match(r'([A-Z0-9_]+) \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);',script[charNum:])
-                print "..."
-                charNum+=1
-            #charNum+=1
-        elif(re.match(r'([A-Z0-9_]+) ([^\[\];]*)\[([^\[\];]*),([^\[\];]*)\];',script[charNum:])!=None):
-            try:
-                matches=re.match(r'([A-Z0-9_]+) ([^\[\];]*)\[([^\[\];]*),([^\[\];]*)\];',script[charNum:])
-                funName=matches.group(1)
-                #print "the function called '"+funName + "' was called."
-                #print "yeah it works."
-                if funName in funCodes:
-                    theFuncCode=funCodes[funName]
-                    sentInObject=ATHVars[matches.group(2)]#bifurcate(ATHVars[matches.group(2)],ATHVars[matches.group(3)])
-                    ATHVars[matches.group(3)],ATHVars[matches.group(4)]=bifurcate(evalScript(theFuncCode,sentInObject))
-                else:
-                    print "error: function called '"+funName+"' not recognized"
-                charNum+=len(funName)
-            except:
-                print "function not recognized/ a bug in the interpreter"
-                print matches#re.match(r'([A-Z0-9_]+) \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);',script[charNum:])
-                print "..."
-                charNum+=1
-        else:
-             charNum+=1
-             if(charNum > len(script)):
-                 THIS.DIE()
-        #print script[charNum]
-    return return_obj
-filename=raw_input()
-filelink=open(filename,'r')
-script=filelink.read(-1)
-result_obj=evalScript(script,NULL_obj)
-raw_input("press enter to close")
- */
+
+// let evalScript = require('./evalScript.js').evalScript;
+const value_obj = require('./bif.js').value_obj;
+let bifurcate = require('./bif.js').bifurcate;
+let unbifurcate = require('./bif.js').unbifurcate;
+let NULL_obj = new value_obj();
+NULL_obj.die();
+
+const args = process.argv.slice(2);
+
+function bif(valueA, valueB = false) {
+    if (valueB) {
+        return unbifurcate(valueA, valueB);
+    } else {
+        return bifurcate(valueA);
+    }
+}
+
+function getStrObj(theStr) {
+    if (theStr.length === 0) {
+        return null;
+    } else {
+        return bif(
+            getCharObj(theStr.charAt(0)),
+            getStrObj(theStr.substring(1))
+        );
+    }
+}
+
+let charObjs = [];
+
+function getCharObj(theChar){
+    if (charObjs.includes(theChar)){
+        return  charObjs[theChar];
+    }else{
+        let theCharObj = new value_obj();
+        charObjs[theChar] = theCharObj;
+        return theCharObj;
+    }
+}
+
+function matchParens (text, start, openStr, closeStr) {
+  let count = 0;
+  let charNum = start;
+  let firstChar = true;
+  while (count > 0 || firstChar) {
+    if (charNum >= text.length) {
+      console.log('err:could not find match!');
+      return -1;
+    } else if (text.charAt(charNum) === closeStr) {
+      count -= 1;
+      // console.log('close at ' + String(charNum));
+    } else if (text.charAt(charNum) === openStr) {
+      count += 1;
+      // console.log('open at ' + String(charNum));
+      if (firstChar) {
+        firstChar = false;
+      }
+    }
+    charNum++;
+  }
+  return charNum - 1;
+}
+
+function evalScript(script, inObj) {
+    let ATHlets = {};
+    let universe = new value_obj();
+    // let NULL_obj = new value_obj();
+    // NULL_obj.die();
+
+    ATHlets['THIS'] = universe;
+    ATHlets['NULL'] = NULL_obj;
+    ATHlets['ARGS'] = inObj;
+    let return_obj = NULL_obj;
+
+    let charNum = 0;
+    let execStack = [];
+    let semicolonOffset = 0;
+
+    let funCodes = {};
+
+    funCodes['HELLO'] = `
+        print "Hello World.";
+        THIS.DIE(THIS);
+    `;
+
+    funCodes['ADD'] = `
+        import bluh BLAH;
+
+        BIFURCATE ARGS[A,B];
+        BIFURCATE [BLAH,A]ATEMP;
+        BIFURCATE [BLAH,B]BTEMP;
+        BIFURCATE ATEMP[JUNK,ATEMP];
+        BIFURCATE BTEMP[JUNK,BTEMP];
+        BIFURCATE [BLAH,NULL]C;
+        BIFURCATE C[JUNK,C];
+
+        ~ATH(ATEMP){
+            BIFURCATE ATEMP[JUNK,ATEMP];
+            BIFURCATE [BLAH,C]C;
+        }
+
+        ~ATH(BTEMP){
+            BIFURCATE BTEMP[JUNK,BTEMP];
+            BIFURCATE [BLAH,C]C;
+        }
+
+        THIS.DIE(C);
+    `;
+
+    while (universe.living) {
+        // console.log(charNum);
+        // console.log(script.substring(charNum, charNum + 6))
+
+        const importTest = RegExp('^importf ([^; ]+) as ([^; ]+);');
+        const print2Test = RegExp('^PRINT2 ([^\[\];]*);');
+        const bif1Test = /^BIFURCATE ([^\[\];]*)\[([^\[\];]*),([^\[\];]*)\];/;
+        const bif2Test = /^BIFURCATE \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);/;
+        const dieTest = RegExp('^([0-9a-zA-Z]+)\.DIE\(([0-9a-zA-Z]*)\);');
+        const catch1 = /^([A-Z0-9_]+) \[([^\[\];]*),([^\[\];]*)\]([^\[\];]*);/;
+        const catch2 = /^([A-Z0-9_]+) ([^\[\];]*)\[([^\[\];]*),([^\[\];]*)\];/;
+
+        if (script.startsWith('import ', charNum)) {
+            semicolonOffset = script.substring(charNum).indexOf(';');
+            let importStatementStr = script.substring(charNum, charNum + semicolonOffset);
+            let importStatementList = importStatementStr.split(' ');
+            if(!ATHlets.hasOwnProperty(importStatementList[importStatementList.length - 1])){
+                ATHlets[importStatementList[importStatementList.length - 1]] = new value_obj();
+            }
+            charNum += semicolonOffset + 2;
+        } else if (importTest.test(script.substring(charNum))) {
+            let matches = script.substring(charNum).match(importTest);
+            let importfFilename = matches[1];
+
+            try {
+                let fs = require('fs');
+                funCodes[matches[2]] = fs.readFileSync(importfFilename).toString();
+            }
+            catch (e) {
+                console.log("Error: could not read file " + importfFilename);
+            }
+            charNum = script.substring(charNum).indexOf(';') + 2;
+        } else if (script.startsWith('~ATH(', charNum)){
+            let closeparenOffset = script.substring(charNum).indexOf(')');
+            let looplet = script.substring(charNum + 5, charNum + closeparenOffset);
+            looplet = looplet.replace(/(^[ '\^\$\*#&]+)|([ '\^\$\*#&]+$)/g, '');
+            // console.log(looplet)
+            // console.log(ATHlets);
+            if (ATHlets.hasOwnProperty(looplet)) {
+
+                // console.log(ATHlets)
+                //  console.log("loop: " + looplet)
+                if (ATHlets[looplet].living) {
+                    execStack.push([charNum, '{']);
+                     // console.log("pushed to execstack")
+                     // console.log(execStack)
+                    charNum += closeparenOffset;
+                } else{
+                    charNum = matchParens(script,charNum,'{','}') + 2;
+                }
+            } else {
+                console.log('warning/error is undefined: ' + looplet);
+            }
+        } else if (script.startsWith('}', charNum)){
+            // console.log(execStack)
+            let openingTuple = execStack.pop();
+            // console.log("tuple: " + openingTuple)
+            if (openingTuple[1] == '{') {
+                charNum = openingTuple[0];
+            } else {
+                console.log('Syntax error');
+            }
+        } else if (script.startsWith('print ', charNum)) {
+            semicolonOffset = script.substring(charNum).indexOf(';');
+            console.log(script.substring(charNum + 6, charNum + semicolonOffset));
+            charNum += semicolonOffset + 2; // +6
+        } else if (print2Test.test(script.substring(charNum))) {
+            let matches = script.substring(charNum).match(print2Test);
+            console.log(getObjStr(ATHlets[matches[1]]));
+            charNum = script.substring(charNum).indexOf(';') + 2;
+        } else if (script.startsWith('INPUT', charNum)) {
+            semicolonOffset = script.substring(charNum).indexOf(';');
+            let letname = script.substring(charNum + 6, charNum + semicolonOffset);
+            let readline = require('readline-sync');
+            let name = readline.question(":");
+            ATHlets[letname] = getStrObj(name);
+            charNum += semicolonOffset + 2;
+        } else if (bif1Test.test(script.substring(charNum))) {
+            let matches = script.substring(charNum).match(bif1Test);
+            // console.log("BIFURCATE TYPE1");
+            // console.log(matches[1]);
+            // console.log(ATHlets[matches[1]]);
+
+            let foo = bif(ATHlets[matches[1]]);
+            ATHlets[matches[2]] = foo.leftHalf;
+            ATHlets[matches[3]] = foo.rightHalf;
+
+            // console.log(ATHlets[matches[2]]);
+            charNum += script.substring(charNum).indexOf(';') + 2;
+        } else if (bif2Test.test(script.substring(charNum))) {
+            let matches = script.substring(charNum).match(bif2Test);
+            // console.log(ATHlets)
+            // console.log(matches)
+            ATHlets[matches[3]] = bif(
+                ATHlets[matches[1]],
+                ATHlets[matches[2]]
+            );
+            charNum += script.substring(charNum).indexOf(';') + 2;
+        } else if (script.startsWith('BIFURCATE ', charNum)) {
+            charNum += 12;
+            let semicolonOffset = script.substring(charNum).indexOf(';');
+            let openSquareOffset = script.substring(charNum).indexOf('[');
+            let closeSquareOffset = script.substring(charNum).indexOf(']');
+            let commaOffset = script.substring(charNum).indexOf(',');
+            let syntacticallyCorrect = true;
+
+            const offsets = [openSquareOffset, closeSquareOffset, commaOffset];
+            for (let offset in offsets) {
+                if (( offset == -1) || (offset > semicolonOffset)) {
+                    console.log("Bifurcate command malformed, char: " + charNum);
+                    syntacticallyCorrect = false;
+                    break;
+                }
+            }
+            if (syntacticallyCorrect) {
+                if (openSquareOffset == 0) {
+                    let leftHalf = script.substring(
+                        charNum + openSquareOffset + 1,
+                        charNum + commaOffset
+                    );
+                    let rightHalf = script.substring(
+                        charNum + commaOffset + 1,
+                        charNum + closeSquareOffset
+                    );
+                    let combinedName = script.substring(
+                        charNum + closeSquareOffset + 1,
+                        charNum + semicolonOffset
+                    );
+                    ATHlets[combinedName] = bif(
+                        ATHlets[leftHalf],
+                        ATHlets[rightHalf]
+                    );
+                } else {
+                    let toSplitName = script.substring(
+                        charNum,
+                        charNum + openSquareOffset
+                    );
+                    let leftHalf = script.substring(
+                        charNum + openSquareOffset + 1,
+                        charNum + commaOffset
+                    );
+                    let rightHalf = script.substring(
+                        charNum + commaOffset + 1,
+                        charNum + closeSquareOffset
+                    );
+                    let foo = bif(ATHlets[toSplitName]);
+                    ATHlets[leftHalf] = foo.leftHalf;
+                    ATHlets[rightHalf] = foo.rightHalf;
+                }
+            }
+        } else if (dieTest.test(script.substring(charNum))) {
+            let matches = script.substring(charNum).match(dieTest);
+            let letname = matches[1];
+            let argletname = matches[2];
+            if (argletname) {
+                return_obj = ATHlets[argletname];
+            }
+            ATHlets[letname].die();
+            charNum += script.substring(charNum).indexOf(';') + 2;
+        } else if (script.startsWith('//', charNum)) {
+            // console.log(script.substring(charNum));
+            let nextNewlinePos = script.substring(charNum).indexOf("\n");
+            if (script.substring(nextNewlinePos).includes("\r")) {
+                nextNewlinePos = script.substring(charNum).indexOf("\r");
+            }
+            charNum += nextNewlinePos + 1;
+        } else if (script.startsWith('/*',charNum)) {
+            charNum += script.substring(charNum).indexOf('*/') + 1;
+        } else if (catch1.test(script.substring(charNum))) {
+            try {
+                let matches = script.substring(charNum).match(catch1);
+                let funName = matches[1];
+                if (funCodes.includes(funName)) {
+                    let theFuncCode = funCodes[funName];
+                    let sentInObject = bif(
+                        ATHlets[matches[2]],
+                        ATHlets[matches[3]]
+                    );
+                    ATHlets[matches[4]] = evalScript(theFuncCode, sentInObject);
+                } else {
+                    console.log("error: function called '" + funName + "' not recognized");
+                }
+                charNum += funName.length + 2;
+            } catch(e) {
+                console.log("function not recognized");
+                console.log(e);
+                console.log("...");
+                charNum++;
+            }
+        } else if (catch2.test(script.substring(charNum))) {
+            try {
+                let matches = script.substring(charNum).match(catch2);
+                let funName = matches[1];
+                if (funCodes.includes(funName)) {
+                    let theFuncCode = funCodes[funName];
+                    let sentInObject = ATHlets[matches[2]];
+                    let foo = bif(evalScript(theFuncCode, sentInObject));
+                    ATHlets[matches[3]] = foo.leftHalf;
+                    ATHlets[matches[4]] = foo.rightHalf;
+                } else {
+                    console.log(
+                        "error: function called '" +
+                        funName +
+                        "' not recognized"
+                    );
+                }
+                charNum += funName.length;
+            } catch(e) {
+                console.log("function not recognized");
+                console.log(e);
+                console.log("...");
+                charNum++;
+            }
+        } else {
+             charNum++;
+             if (charNum > script.length) {
+                 universe.die();
+             }
+        }
+    }
+    return return_obj;
+}
+
+let filename = args[0];
+let fs = require('fs');
+let script = fs.readFileSync(filename).toString();
+result_obj = evalScript(script, NULL_obj);
