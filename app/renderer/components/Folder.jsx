@@ -27,12 +27,12 @@ export default class Folder extends Component {
     render() {
         return (
             <div className="folder-div">
-                <a onClick={() => this.toggleSubFolder()}> 
+                <a onClick={() => this.toggleSubFolder()}>
                     {(!this.state.showSubFolder)? <FaFolder /> : <FaFolderOpen />} {this.state.folder}
                 </a>
                 <div className={"subfolder-div " + (this.state.showSubFolder ? 'show' : 'hide')}>
                     {this.state.files.map(file => {return <File key={file} name={file} path={this.state.cwd+'/'+file}/>;})}
-                    {this.state.dirs.map(folder => {return <Folder key={folder} name={folder} cwd={this.state.cwd}/>})}                    
+                    {this.state.dirs.map(folder => {return <Folder key={folder} name={folder} cwd={this.state.cwd}/>;})}
                 </div>
             </div>
         );

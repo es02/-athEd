@@ -20,13 +20,13 @@ export default class File extends Component {
         const contents = readFileSync(this.state.absPath,'utf8');
         console.log(contents);
         this.state.fileOpen ? this.setState({fileOpen : false}) : this.setState({fileOpen : true});
-        
+
     }
     render() {
         return (
             <div className="file-div">
-                <a onClick={() => {this.showText()}}>
-                    {(this.state.fileOpen) ? <FaRegFileCode /> : <FaRegFile />} 
+                <a onClick={() => {this.showText();}}>
+                    {(this.state.fileOpen) ? <FaRegFileCode /> : <FaRegFile />}
                     {this.state.file}
                 </a>
             </div>
