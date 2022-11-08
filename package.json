@@ -26,17 +26,17 @@
   "homepage": "https://github.com/es02/-athEd#readme",
   "devDependencies": {
     "babel-core": "^6.5.2",
-    "babel-loader": "^6.2.2",
+    "babel-loader": "^9.1.0",
     "babel-preset-es2015": "^6.5.0",
     "babel-preset-react": "^6.5.0",
-    "css-loader": "^0.23.1",
+    "css-loader": "^6.7.1",
     "electron-prebuilt": "^0.36.0",
     "eslint": "^2.1.0",
     "eslint-loader": "^1.2.1",
     "node-sass": "^4.12.0",
-    "sass-loader": "^3.1.2",
+    "sass-loader": "^13.1.0",
     "style-loader": "^0.13.0",
-    "webpack": "^1.12.14",
+    "webpack": "^5.74.0",
     "webpack-dev-server": "^1.14.1"
   },
   "dependencies": {
